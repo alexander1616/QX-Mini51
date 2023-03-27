@@ -511,7 +511,7 @@ _digitDisplay_helper:
 	sjmp	00101$
 00125$:
 	cjne	r7,#0x02,00126$
-	sjmp	00102$
+	sjmp	00106$
 00126$:
 	cjne	r7,#0x03,00127$
 	sjmp	00103$
@@ -524,15 +524,8 @@ _digitDisplay_helper:
 	inc	_mode
 ;	binaryCount.c:68: return 1;
 	mov	dpl,#0x01
-;	binaryCount.c:69: case 2:
-	ret
-00102$:
-;	binaryCount.c:70: minusLcd2(3);
-	mov	dpl,#0x03
-	lcall	_minusLcd2
-;	binaryCount.c:71: break;
 ;	binaryCount.c:72: case 3:
-	sjmp	00106$
+	ret
 00103$:
 ;	binaryCount.c:73: addLcd(3);
 	mov	dpl,#0x03

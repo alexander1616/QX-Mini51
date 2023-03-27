@@ -429,13 +429,13 @@
                                     429 ;	main.c:29: case 0:
       0000BE                        430 00103$:
                                     431 ;	main.c:30: dualCylon();
-      0000BE 12 05 55         [24]  432 	lcall	_dualCylon
+      0000BE 12 05 4D         [24]  432 	lcall	_dualCylon
                                     433 ;	main.c:31: break;
                                     434 ;	main.c:32: case 1:
       0000C1 80 D5            [24]  435 	sjmp	00110$
       0000C3                        436 00104$:
                                     437 ;	main.c:33: cylon();
-      0000C3 12 04 FF         [24]  438 	lcall	_cylon
+      0000C3 12 04 F7         [24]  438 	lcall	_cylon
                                     439 ;	main.c:34: break;
                                     440 ;	main.c:35: case 2:
       0000C6 80 D0            [24]  441 	sjmp	00110$
@@ -447,7 +447,7 @@
       0000CB 80 CB            [24]  447 	sjmp	00110$
       0000CD                        448 00106$:
                                     449 ;	main.c:39: digitDisplay();
-      0000CD 12 04 F4         [24]  450 	lcall	_digitDisplay
+      0000CD 12 04 EC         [24]  450 	lcall	_digitDisplay
                                     451 ;	main.c:40: break;
                                     452 ;	main.c:41: default:
       0000D0 80 C6            [24]  453 	sjmp	00110$

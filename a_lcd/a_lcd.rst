@@ -613,7 +613,7 @@
       0001CA 90 00 0A         [24]  613 	mov	dptr,#0x000a
       0001CD C0 07            [24]  614 	push	ar7
       0001CF C0 06            [24]  615 	push	ar6
-      0001D1 12 05 93         [24]  616 	lcall	__mulint
+      0001D1 12 05 8B         [24]  616 	lcall	__mulint
       0001D4 AC 82            [24]  617 	mov	r4,dpl
       0001D6 AD 83            [24]  618 	mov	r5,dph
       0001D8 D0 06            [24]  619 	pop	ar6
@@ -629,7 +629,7 @@
       0001E8 90 00 64         [24]  629 	mov	dptr,#0x0064
       0001EB C0 07            [24]  630 	push	ar7
       0001ED C0 06            [24]  631 	push	ar6
-      0001EF 12 05 93         [24]  632 	lcall	__mulint
+      0001EF 12 05 8B         [24]  632 	lcall	__mulint
       0001F2 AC 82            [24]  633 	mov	r4,dpl
       0001F4 AD 83            [24]  634 	mov	r5,dph
       0001F6 D0 06            [24]  635 	pop	ar6
@@ -645,7 +645,7 @@
       000206 90 03 E8         [24]  645 	mov	dptr,#0x03e8
       000209 C0 07            [24]  646 	push	ar7
       00020B C0 06            [24]  647 	push	ar6
-      00020D 12 05 93         [24]  648 	lcall	__mulint
+      00020D 12 05 8B         [24]  648 	lcall	__mulint
       000210 AC 82            [24]  649 	mov	r4,dpl
       000212 AD 83            [24]  650 	mov	r5,dph
       000214 D0 06            [24]  651 	pop	ar6
@@ -878,7 +878,7 @@
       0002FD 8F 83            [24]  878 	mov	dph,r7
       0002FF C0 07            [24]  879 	push	ar7
       000301 C0 06            [24]  880 	push	ar6
-      000303 12 06 26         [24]  881 	lcall	__modsint
+      000303 12 06 1E         [24]  881 	lcall	__modsint
       000306 AC 82            [24]  882 	mov	r4,dpl
       000308 D0 06            [24]  883 	pop	ar6
       00030A D0 07            [24]  884 	pop	ar7
@@ -888,7 +888,7 @@
       000311 75 1E 00         [24]  888 	mov	(__divsint_PARM_2 + 1),#0x00
       000314 8E 82            [24]  889 	mov	dpl,r6
       000316 8F 83            [24]  890 	mov	dph,r7
-      000318 12 06 5C         [24]  891 	lcall	__divsint
+      000318 12 06 54         [24]  891 	lcall	__divsint
       00031B AE 82            [24]  892 	mov	r6,dpl
       00031D AF 83            [24]  893 	mov	r7,dph
       00031F                        894 00105$:
@@ -908,7 +908,7 @@
       000335 8F 83            [24]  908 	mov	dph,r7
       000337 C0 07            [24]  909 	push	ar7
       000339 C0 06            [24]  910 	push	ar6
-      00033B 12 06 26         [24]  911 	lcall	__modsint
+      00033B 12 06 1E         [24]  911 	lcall	__modsint
       00033E AC 82            [24]  912 	mov	r4,dpl
       000340 D0 06            [24]  913 	pop	ar6
       000342 D0 07            [24]  914 	pop	ar7
@@ -918,7 +918,7 @@
       000349 75 1E 00         [24]  918 	mov	(__divsint_PARM_2 + 1),#0x00
       00034C 8E 82            [24]  919 	mov	dpl,r6
       00034E 8F 83            [24]  920 	mov	dph,r7
-      000350 12 06 5C         [24]  921 	lcall	__divsint
+      000350 12 06 54         [24]  921 	lcall	__divsint
       000353 AE 82            [24]  922 	mov	r6,dpl
       000355 AF 83            [24]  923 	mov	r7,dph
       000357                        924 00107$:
@@ -938,7 +938,7 @@
       00036D 8F 83            [24]  938 	mov	dph,r7
       00036F C0 07            [24]  939 	push	ar7
       000371 C0 06            [24]  940 	push	ar6
-      000373 12 06 26         [24]  941 	lcall	__modsint
+      000373 12 06 1E         [24]  941 	lcall	__modsint
       000376 AC 82            [24]  942 	mov	r4,dpl
       000378 D0 06            [24]  943 	pop	ar6
       00037A D0 07            [24]  944 	pop	ar7
@@ -948,7 +948,7 @@
       000381 75 1E 00         [24]  948 	mov	(__divsint_PARM_2 + 1),#0x00
       000384 8E 82            [24]  949 	mov	dpl,r6
       000386 8F 83            [24]  950 	mov	dph,r7
-      000388 12 06 5C         [24]  951 	lcall	__divsint
+      000388 12 06 54         [24]  951 	lcall	__divsint
       00038B AE 82            [24]  952 	mov	r6,dpl
       00038D AF 83            [24]  953 	mov	r7,dph
       00038F                        954 00109$:
@@ -966,7 +966,7 @@
       0003A0 75 1E 00         [24]  966 	mov	(__modsint_PARM_2 + 1),#0x00
       0003A3 8E 82            [24]  967 	mov	dpl,r6
       0003A5 8F 83            [24]  968 	mov	dph,r7
-      0003A7 12 06 26         [24]  969 	lcall	__modsint
+      0003A7 12 06 1E         [24]  969 	lcall	__modsint
       0003AA AE 82            [24]  970 	mov	r6,dpl
       0003AC AF 83            [24]  971 	mov	r7,dph
       0003AE 8E 13            [24]  972 	mov	_lcdVal,r6

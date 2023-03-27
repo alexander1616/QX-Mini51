@@ -23,7 +23,7 @@ unsigned char readButton(){
 	if(valb = readButton_helper()){
 		buttonBucket[valb]++;
         unsigned char x, z;
-        z = 5;
+        z = 7;
         for (; z > 0; z--){
             for (x = 200; x > 0; x--){
 			    valb = readButton_helper();
@@ -33,7 +33,7 @@ unsigned char readButton(){
 		    }
         }
 		char store = 0;
-		for (char y = 1; y < 4; y++){
+		for (char y = 1; y <= 4; y++){
 			if (buttonBucket[y] > buttonBucket[store]){
 				store = y;
 			}

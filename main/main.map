@@ -80,9 +80,9 @@ C:   00000083  s_GSFINAL
 C:   00000086  s_CSEG                          
 C:   000000E1  l_SSEG                          
 C:   00000100  l_IRAM                          
-C:   00000612  l_CSEG                          
-C:   00000698  s_CONST                         
-C:   00000698  s_XINIT                         
+C:   0000060A  l_CSEG                          
+C:   00000690  s_CONST                         
+C:   00000690  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -359,7 +359,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                00000086    00000612 =        1554. bytes (REL,CON,CODE)
+CSEG                                00000086    0000060A =        1546. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -378,16 +378,16 @@ C:   000003B9  _readButton_helper                 buttonPress
 C:   000003D8  _readButton                        buttonPress
 C:   00000497  _binaryCount                       binaryCount
 C:   000004BB  _digitDisplay_helper               binaryCount
-C:   000004F4  _digitDisplay                      binaryCount
-C:   000004FF  _cylon                             binaryCount
-C:   00000555  _dualCylon                         binaryCount
-C:   00000593  __mulint                           _mulint
-C:   00000593  __mulint_dummy                     _mulint
-C:   000005B0  __moduint                          _moduint
-C:   000005FD  __divuint                          _divuint
-C:   00000626  __modsint                          _modsint
-C:   0000065C  __divsint                          _divsint
-C:   00000694  __sdcc_external_startup            _startup
+C:   000004EC  _digitDisplay                      binaryCount
+C:   000004F7  _cylon                             binaryCount
+C:   0000054D  _dualCylon                         binaryCount
+C:   0000058B  __mulint                           _mulint
+C:   0000058B  __mulint_dummy                     _mulint
+C:   000005A8  __moduint                          _moduint
+C:   000005F5  __divuint                          _divuint
+C:   0000061E  __modsint                          _modsint
+C:   00000654  __divsint                          _divsint
+C:   0000068C  __sdcc_external_startup            _startup
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 18.
 

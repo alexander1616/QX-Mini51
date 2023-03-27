@@ -408,8 +408,8 @@ _readButton:
 	mov	a,@r1
 	inc	a
 	mov	@r1,a
-;	buttonPress.c:26: z = 5;
-	mov	r7,#0x05
+;	buttonPress.c:26: z = 7;
+	mov	r7,#0x07
 00113$:
 ;	buttonPress.c:27: for (; z > 0; z--){
 	mov	a,r7
@@ -448,12 +448,12 @@ _readButton:
 00104$:
 ;	buttonPress.c:35: char store = 0;
 	mov	r7,#0x00
-;	buttonPress.c:36: for (char y = 1; y < 4; y++){
+;	buttonPress.c:36: for (char y = 1; y <= 4; y++){
 	mov	r6,#0x01
 00116$:
-	cjne	r6,#0x04,00175$
-00175$:
-	jnc	00107$
+	mov	a,r6
+	add	a,#0xff - 0x04
+	jc	00107$
 ;	buttonPress.c:37: if (buttonBucket[y] > buttonBucket[store]){
 	mov	a,r6
 	add	a,#_readButton_buttonBucket_65536_10
@@ -470,7 +470,7 @@ _readButton:
 ;	buttonPress.c:38: store = y;
 	mov	ar7,r6
 00117$:
-;	buttonPress.c:36: for (char y = 1; y < 4; y++){
+;	buttonPress.c:36: for (char y = 1; y <= 4; y++){
 	inc	r6
 	sjmp	00116$
 00107$:

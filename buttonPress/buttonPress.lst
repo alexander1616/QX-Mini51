@@ -408,8 +408,8 @@
       00003A E7               [12]  408 	mov	a,@r1
       00003B 04               [12]  409 	inc	a
       00003C F7               [12]  410 	mov	@r1,a
-                                    411 ;	buttonPress.c:26: z = 5;
-      00003D 7F 05            [12]  412 	mov	r7,#0x05
+                                    411 ;	buttonPress.c:26: z = 7;
+      00003D 7F 07            [12]  412 	mov	r7,#0x07
       00003F                        413 00113$:
                                     414 ;	buttonPress.c:27: for (; z > 0; z--){
       00003F EF               [12]  415 	mov	a,r7
@@ -448,12 +448,12 @@
       000065                        448 00104$:
                                     449 ;	buttonPress.c:35: char store = 0;
       000065 7F 00            [12]  450 	mov	r7,#0x00
-                                    451 ;	buttonPress.c:36: for (char y = 1; y < 4; y++){
+                                    451 ;	buttonPress.c:36: for (char y = 1; y <= 4; y++){
       000067 7E 01            [12]  452 	mov	r6,#0x01
       000069                        453 00116$:
-      000069 BE 04 00         [24]  454 	cjne	r6,#0x04,00175$
-      00006C                        455 00175$:
-      00006C 50 16            [24]  456 	jnc	00107$
+      000069 EE               [12]  454 	mov	a,r6
+      00006A 24 FB            [12]  455 	add	a,#0xff - 0x04
+      00006C 40 16            [24]  456 	jc	00107$
                                     457 ;	buttonPress.c:37: if (buttonBucket[y] > buttonBucket[store]){
       00006E EE               [12]  458 	mov	a,r6
       00006F 24r00            [12]  459 	add	a,#_readButton_buttonBucket_65536_10
@@ -470,7 +470,7 @@
                                     470 ;	buttonPress.c:38: store = y;
       00007F 8E 07            [24]  471 	mov	ar7,r6
       000081                        472 00117$:
-                                    473 ;	buttonPress.c:36: for (char y = 1; y < 4; y++){
+                                    473 ;	buttonPress.c:36: for (char y = 1; y <= 4; y++){
       000081 0E               [12]  474 	inc	r6
       000082 80 E5            [24]  475 	sjmp	00116$
       000084                        476 00107$:

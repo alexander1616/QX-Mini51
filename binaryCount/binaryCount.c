@@ -67,7 +67,7 @@ unsigned char digitDisplay_helper(){
             mode++;
             return 1;
         case 2:
-            minusLcd2(3);
+            //minusLcd2(3);
             break;
         case 3:
             addLcd(3);

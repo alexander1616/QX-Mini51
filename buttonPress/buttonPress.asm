@@ -9,6 +9,7 @@
 ; Public variables in this module
 ;--------------------------------------------------------
 	.globl _readButton
+	.globl _readButton_helper
 	.globl _TF2
 	.globl _EXF2
 	.globl _RCLK
@@ -266,6 +267,8 @@ _TF2	=	0x00cf
 ; internal ram data
 ;--------------------------------------------------------
 	.area DSEG    (DATA)
+_readButton_buttonBucket_65536_10:
+	.ds 5
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
 ;--------------------------------------------------------
@@ -326,15 +329,15 @@ _TF2	=	0x00cf
 ;--------------------------------------------------------
 	.area CSEG    (CODE)
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'readButton'
+;Allocation info for local variables in function 'readButton_helper'
 ;------------------------------------------------------------
 ;button                    Allocated to registers r7 
 ;------------------------------------------------------------
-;	buttonPress.c:4: unsigned char readButton(){
+;	buttonPress.c:4: unsigned char readButton_helper(){
 ;	-----------------------------------------
-;	 function readButton
+;	 function readButton_helper
 ;	-----------------------------------------
-_readButton:
+_readButton_helper:
 	ar7 = 0x07
 	ar6 = 0x06
 	ar5 = 0x05
@@ -371,6 +374,101 @@ _readButton:
 ;	buttonPress.c:16: return button;
 	mov	dpl,r7
 ;	buttonPress.c:17: }
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'readButton'
+;------------------------------------------------------------
+;valb                      Allocated to registers r6 
+;buttonBucket              Allocated with name '_readButton_buttonBucket_65536_10'
+;x                         Allocated to registers r7 
+;store                     Allocated to registers r7 
+;y                         Allocated to registers 
+;------------------------------------------------------------
+;	buttonPress.c:20: unsigned char readButton(){
+;	-----------------------------------------
+;	 function readButton
+;	-----------------------------------------
+_readButton:
+;	buttonPress.c:22: unsigned char buttonBucket[5] = {0};
+	mov	_readButton_buttonBucket_65536_10,#0x00
+	mov	(_readButton_buttonBucket_65536_10 + 0x0001),#0x00
+	mov	(_readButton_buttonBucket_65536_10 + 0x0002),#0x00
+	mov	(_readButton_buttonBucket_65536_10 + 0x0003),#0x00
+	mov	(_readButton_buttonBucket_65536_10 + 0x0004),#0x00
+;	buttonPress.c:23: if(valb = readButton_helper()){
+	lcall	_readButton_helper
+	mov	a,dpl
+	mov	r6,a
+	jz	00108$
+;	buttonPress.c:24: buttonBucket[valb]++;
+	mov	a,r6
+	add	a,#_readButton_buttonBucket_65536_10
+	mov	r1,a
+	mov	a,@r1
+	inc	a
+	mov	@r1,a
+;	buttonPress.c:25: for (char x = 0; x < 100; x++){
+	mov	r7,#0x00
+00110$:
+	cjne	r7,#0x64,00155$
+00155$:
+	jnc	00103$
+;	buttonPress.c:26: valb = readButton_helper();
+	push	ar7
+	lcall	_readButton_helper
+	mov	r6,dpl
+	pop	ar7
+;	buttonPress.c:27: if (valb){
+	mov	a,r6
+	jz	00111$
+;	buttonPress.c:28: buttonBucket[valb]++;
+	mov	a,r6
+	add	a,#_readButton_buttonBucket_65536_10
+	mov	r1,a
+	mov	a,@r1
+	mov	r6,a
+	inc	a
+	mov	@r1,a
+00111$:
+;	buttonPress.c:25: for (char x = 0; x < 100; x++){
+	inc	r7
+	sjmp	00110$
+00103$:
+;	buttonPress.c:31: char store = 0;
+	mov	r7,#0x00
+;	buttonPress.c:32: for (char y = 1; y < 4; y++){
+	mov	r6,#0x01
+00113$:
+	cjne	r6,#0x04,00158$
+00158$:
+	jnc	00106$
+;	buttonPress.c:33: if (buttonBucket[y] > buttonBucket[store]){
+	mov	a,r6
+	add	a,#_readButton_buttonBucket_65536_10
+	mov	r1,a
+	mov	ar5,@r1
+	mov	a,r7
+	add	a,#_readButton_buttonBucket_65536_10
+	mov	r1,a
+	mov	ar4,@r1
+	clr	c
+	mov	a,r4
+	subb	a,r5
+	jnc	00114$
+;	buttonPress.c:34: store = y;
+	mov	ar7,r6
+00114$:
+;	buttonPress.c:32: for (char y = 1; y < 4; y++){
+	inc	r6
+	sjmp	00113$
+00106$:
+;	buttonPress.c:37: return store;	
+	mov	dpl,r7
+	ret
+00108$:
+;	buttonPress.c:39: return 0;
+	mov	dpl,#0x00
+;	buttonPress.c:40: }
 	ret
 	.area CSEG    (CODE)
 	.area CONST   (CODE)

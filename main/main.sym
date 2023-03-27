@@ -334,13 +334,14 @@ Symbol Table
     __sdcc_gsinit_startup                                          ****** GX
   E __sdcc_program_startup                                         000003 GR
   6 __start__stack                                                 000000 GR
+    _binaryCount                                                   ****** GX
     _cylon                                                         ****** GX
+    _digitDisplay                                                  ****** GX
+    _dualCylon                                                     ****** GX
  17 _getMode                                                       000000 GR
- 17 _main                                                          00001B GR
+ 17 _main                                                          000012 GR
   5 _mode                                                          000000 GR
     _readButton                                                    ****** GX
-    _showLcd                                                       ****** GX
-    _showLcd_PARM_2                                                ****** GX
     a                                                           =  0000E0 L
     a.0                                                         =  0000E0 L
     a.1                                                         =  0000E1 L
@@ -357,12 +358,12 @@ Symbol Table
     acc.2                                                       =  0000E2 L
     acc.3                                                       =  0000E3 L
     acc.4                                                       =  0000E4 L
-    acc.5                                                       =  0000E5 L
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 7.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
+    acc.5                                                       =  0000E5 L
     acc.6                                                       =  0000E6 L
     acc.7                                                       =  0000E7 L
     ar0                                                         =  000000 
@@ -417,12 +418,12 @@ Symbol Table
     ip.4                                                        =  0000BC L
     ip.5                                                        =  0000BD L
     it0                                                         =  000088 L
-    it1                                                         =  00008A L
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 8.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
+    it1                                                         =  00008A L
     ov                                                          =  0000D2 L
     p                                                           =  0000D0 L
     p0                                                          =  000080 L
@@ -477,12 +478,12 @@ Symbol Table
     pt2                                                         =  0000BD L
     px0                                                         =  0000B8 L
     px1                                                         =  0000BA L
-    rb8                                                         =  00009A L
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 9.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
+    rb8                                                         =  00009A L
     rcap2h                                                      =  0000CB L
     rcap2l                                                      =  0000CA L
     rclk                                                        =  0000CD L
@@ -537,15 +538,14 @@ Symbol Table
     tl2                                                         =  0000CC L
     tmod                                                        =  000089 L
     tr0                                                         =  00008C L
-    tr1                                                         =  00008E L
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 10.
 Hexadecimal [24-Bits]
 
 Symbol Table
 
+    tr1                                                         =  00008E L
     tr2                                                         =  0000CA L
     txd                                                         =  0000B1 L
-
 
 ASxxxx Assembler V02.00 + NoICE + SDCC mods  (Intel 8051), page 11.
 Hexadecimal [24-Bits]
@@ -575,7 +575,7 @@ Area Table
   14 GSINIT5                                    size      0   flags   20
   15 GSINIT                                     size      3   flags   20
   16 GSFINAL                                    size      3   flags   20
-  17 CSEG                                       size     79   flags   20
+  17 CSEG                                       size     51   flags   20
   18 CONST                                      size      0   flags   20
   19 XINIT                                      size      0   flags   20
   1A CABS                                       size      0   flags   28

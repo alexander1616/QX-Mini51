@@ -4,5 +4,6 @@
 extern void binaryCount();
 extern void cylon();
 extern void dualCylon();
+extern void digitDisplay();
 
 #endif

@@ -39,10 +39,10 @@ C:   00000000  s_RSEG
 C:   00000000  s_RSEG0                         
 C:   00000000  s_RSEG1                         
 C:   00000000  s_XABS                          
-C:   00000001  l_OSEG                          
 C:   00000001  s_PSEG                          
 C:   00000001  s_XISEG                         
 C:   00000001  s_XSEG                          
+C:   00000002  l_OSEG                          
 C:   00000003  l_GSFINAL                       
 C:   00000003  l_GSINIT0                       
 C:   00000006  l_HOME                          
@@ -55,8 +55,8 @@ C:   0000000A  l_GSINIT2
 C:   00000010  s_REG_BANK_2                    
 C:   00000013  s_GSINIT3                       
 C:   00000018  s_BIT_BANK                      
-C:   00000018  s_OSEG                          
 C:   00000018  s_REG_BANK_3                    
+C:   0000001D  s_OSEG                          
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
 
@@ -66,7 +66,7 @@ CABS                                00000000    00000000 =           0. bytes (A
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-C:   00000019  s_SSEG                          
+C:   0000001F  s_SSEG                          
 C:   00000020  s_BSEG_BYTES                    
 C:   00000020  s__CODE                         
 C:   00000022  l_GSINIT3                       
@@ -78,11 +78,11 @@ C:   0000005F  s_GSINIT5
 C:   00000080  l_DSEG                          
 C:   00000083  s_GSFINAL                       
 C:   00000086  s_CSEG                          
-C:   000000E7  l_SSEG                          
+C:   000000E1  l_SSEG                          
 C:   00000100  l_IRAM                          
-C:   000002E7  l_CSEG                          
-C:   0000036D  s_CONST                         
-C:   0000036D  s_XINIT                         
+C:   00000402  l_CSEG                          
+C:   00000488  s_CONST                         
+C:   00000488  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -261,22 +261,23 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-OSEG                                00000018    00000001 =           1. bytes (REL,OVR)
+OSEG                                0000001D    00000002 =           2. bytes (REL,OVR)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000018  _setLcd_PARM_2                     a_lcd
+     0000001D  __mulint_PARM_2                    _mulint
+     0000001D  _setLcd_PARM_2                     a_lcd
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 9.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-SSEG                                00000019    000000E7 =         231. bytes (REL,OVR)
+SSEG                                0000001F    000000E1 =         225. bytes (REL,OVR)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000019  __start__stack                     main
+     0000001F  __start__stack                     main
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 10.
 Hexadecimal  [32-Bits]
@@ -355,23 +356,30 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                00000086    000002E7 =         743. bytes (REL,CON,CODE)
+CSEG                                00000086    00000402 =        1026. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
 C:   00000086  _getMode                           main
-C:   000000A1  _main                              main
-C:   000000FF  _lcdDelay                          a_lcd
-C:   00000110  _showLcd2                          a_lcd
-C:   00000155  _showLcd3                          a_lcd
-C:   000001A1  _showLcd                           a_lcd
-C:   000001E9  _addLcd                            a_lcd
-C:   00000221  _setLcd                            a_lcd
-C:   00000229  _readButton                        buttonPress
-C:   000002B7  _binaryCount                       binaryCount
-C:   000002DE  _cylon                             binaryCount
-C:   0000032E  _dualCylon                         binaryCount
-C:   00000369  __sdcc_external_startup            _startup
+C:   00000098  _main                              main
+C:   000000D7  _lcdDelay                          a_lcd
+C:   000000E8  _showLcd2                          a_lcd
+C:   0000012D  _showLcd3                          a_lcd
+C:   00000179  _showLcd                           a_lcd
+C:   000001C1  _sumLcdVal                         a_lcd
+C:   00000221  _addLcd                            a_lcd
+C:   00000259  _minusLcd                          a_lcd
+C:   00000290  _setLcd                            a_lcd
+C:   00000298  _readButton_helper                 buttonPress
+C:   000002B7  _readButton                        buttonPress
+C:   0000036C  _binaryCount                       binaryCount
+C:   00000390  _digitDisplay_helper               binaryCount
+C:   000003C5  _digitDisplay                      binaryCount
+C:   000003D3  _cylon                             binaryCount
+C:   00000429  _dualCylon                         binaryCount
+C:   00000467  __mulint                           _mulint
+C:   00000467  __mulint_dummy                     _mulint
+C:   00000484  __sdcc_external_startup            _startup
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 18.
 
@@ -389,6 +397,8 @@ Libraries Linked                          [ object file ]
                                           [ crtclear.rel ]
 /usr/bin/../share/sdcc/lib/small/mcs51.lib
                                           [ crtxinit.rel ]
+/usr/bin/../share/sdcc/lib/small/libint.lib
+                                          [ _mulint.rel ]
 /usr/bin/../share/sdcc/lib/small/mcs51.lib
                                           [ crtxclear.rel ]
 /usr/bin/../share/sdcc/lib/small/mcs51.lib

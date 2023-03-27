@@ -10,9 +10,11 @@
 ;--------------------------------------------------------
 	.globl _main
 	.globl _getMode
+	.globl _digitDisplay
+	.globl _dualCylon
 	.globl _cylon
+	.globl _binaryCount
 	.globl _readButton
-	.globl _showLcd
 	.globl _TF2
 	.globl _EXF2
 	.globl _RCLK
@@ -379,20 +381,13 @@ _getMode:
 	lcall	_readButton
 	mov	r7,dpl
 ;	main.c:11: if (switchMode == 1){
-	cjne	r7,#0x01,00104$
+	cjne	r7,#0x01,00102$
 ;	main.c:12: mode++;
 	inc	_mode
-;	main.c:13: if (mode > 2){
-	mov	a,_mode
-	add	a,#0xff - 0x02
-	jnc	00102$
-;	main.c:14: mode = 0;
-	mov	_mode,#0x00
-00102$:
 ;	main.c:16: return 1;
 	mov	dpl,#0x01
 	ret
-00104$:
+00102$:
 ;	main.c:18: return 0;
 	mov	dpl,#0x00
 ;	main.c:19: }
@@ -408,71 +403,60 @@ _getMode:
 ;	-----------------------------------------
 _main:
 ;	main.c:22: while(1){
-00112$:
+00110$:
 ;	main.c:24: button = readButton();
 	lcall	_readButton
 	mov	r7,dpl
 ;	main.c:25: if (button == 1){
-	cjne	r7,#0x01,00104$
+	cjne	r7,#0x01,00102$
 ;	main.c:26: mode++;
 	inc	_mode
-;	main.c:27: if (mode > 2){
-	mov	a,_mode
-	add	a,#0xff - 0x02
-	jnc	00104$
-;	main.c:28: mode = 0;
-	mov	_mode,#0x00
-00104$:
-;	main.c:31: switch (mode){
+00102$:
+;	main.c:33: switch (mode){
 	mov	a,_mode
 	add	a,#0xff - 0x03
-	jc	00112$
+	jc	00107$
 	mov	a,_mode
 	mov	b,#0x03
 	mul	ab
-	mov	dptr,#00136$
+	mov	dptr,#00129$
 	jmp	@a+dptr
-00136$:
+00129$:
+	ljmp	00103$
+	ljmp	00104$
 	ljmp	00105$
 	ljmp	00106$
-	ljmp	00107$
-	ljmp	00108$
-;	main.c:32: case 0:
-00105$:
-;	main.c:34: showLcd(0, 1);
-	mov	_showLcd_PARM_2,#0x01
-	mov	dpl,#0x00
-	lcall	_showLcd
-;	main.c:35: break;
-;	main.c:36: case 1:
-	sjmp	00112$
-00106$:
-;	main.c:37: cylon();
-	lcall	_cylon
-;	main.c:38: showLcd(1, 2);
-	mov	_showLcd_PARM_2,#0x02
-	mov	dpl,#0x01
-	lcall	_showLcd
+;	main.c:34: case 0:
+00103$:
+;	main.c:35: dualCylon();
+	lcall	_dualCylon
 ;	main.c:39: break;
-;	main.c:40: case 2:
-	sjmp	00112$
+;	main.c:40: case 1:
+	sjmp	00110$
+00104$:
+;	main.c:41: cylon();
+	lcall	_cylon
+;	main.c:44: break;
+;	main.c:45: case 2:
+	sjmp	00110$
+00105$:
+;	main.c:46: binaryCount();
+	lcall	_binaryCount
+;	main.c:49: break;
+;	main.c:50: case 3:
+	sjmp	00110$
+00106$:
+;	main.c:51: digitDisplay();
+	lcall	_digitDisplay
+;	main.c:53: break;
+;	main.c:54: default:
+	sjmp	00110$
 00107$:
-;	main.c:42: showLcd(2, 3);
-	mov	_showLcd_PARM_2,#0x03
-	mov	dpl,#0x02
-	lcall	_showLcd
-;	main.c:43: break;
-;	main.c:44: case 3:
-	sjmp	00112$
-00108$:
-;	main.c:45: showLcd(3, 4);
-	mov	_showLcd_PARM_2,#0x04
-	mov	dpl,#0x03
-	lcall	_showLcd
-;	main.c:46: break;
-;	main.c:49: }
-;	main.c:51: }
-	sjmp	00112$
+;	main.c:55: mode = 0;
+	mov	_mode,#0x00
+;	main.c:57: }
+;	main.c:59: }
+	sjmp	00110$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
 	.area XINIT   (CODE)

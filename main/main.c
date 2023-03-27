@@ -10,9 +10,9 @@ unsigned char getMode(){
     switchMode = readButton();
     if (switchMode == 1){
         mode++;
-        if (mode > 2){
+        /*if (mode > 3){
             mode = 0;
-        }
+        }*/
         return 1;
     }
     return 0;
@@ -20,31 +20,39 @@ unsigned char getMode(){
 
 void main(){
     while(1){
-        unsigned char button;
+       unsigned char button;
         button = readButton();
         if (button == 1){
             mode++;
-            if (mode > 2){
+            /*if (mode > 3){
                 mode = 0;
             }
+            */
         }
+       
 	    switch (mode){
 	   	    case 0:
+                dualCylon();
                 //binaryCount();
-                showLcd(0, 1);
+                //mode++;
+                //showLcd(0, 1);
 			    break;
 		    case 1:
                 cylon();
-                showLcd(1, 2);
+                //mode++;
+                //showLcd(1, 2);
 			    break;
 		    case 2:
-                //dualCylon();
-                showLcd(2, 3);
+                binaryCount();
+                //mode = 0;
+                //showLcd(2, 3);
 			    break;
 		    case 3:
-                showLcd(3, 4);
+                digitDisplay();
+                //showLcd(3, 4);
 			    break;
             default:
+                mode = 0;
                 break;
         }
     }

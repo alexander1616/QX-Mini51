@@ -15,37 +15,24 @@ void lcdDelay(unsigned char i){
 }
 
 unsigned char lcdVal[4] = {0};
-//unsigned char lcdCurVal[4] = {0};
 
 void showLcd2(){
- //  if(lcdCurVal[0] != lcdVal[0]){
 	    	P0 = numTable[lcdVal[0]];
 	    	P2_0 = 0;
 	    	lcdDelay(5);
 	    	P2_0 = 1;
-//            lcdCurVal[0] = lcdVal[0];
-//    }
-//    if(lcdCurVal[1] != lcdVal[1]){
     		P0 = numTable[lcdVal[1]];
     		P2_1 = 0;
     		lcdDelay(5);
     		P2_1 = 1;
-//            lcdCurVal[1] = lcdVal[1];
-//    }	
-//    if(lcdCurVal[2] != lcdVal[2]){
 		    P0 = numTable[lcdVal[2]];
 		    P2_2 = 0;
 		    lcdDelay(5);
 		    P2_2 = 1;
-//            lcdCurVal[2] = lcdVal[2];
-//    }
-//    if(lcdCurVal[3] != lcdVal[3]){
 		    P0 = numTable[lcdVal[3]];
 		    P2_3 = 0;
 		    lcdDelay(5);
 		    P2_3 = 1;
-//            lcdCurVal[3] = lcdVal[3];
-//    }
 }
 
 void showLcd3(unsigned char pos){
@@ -107,6 +94,12 @@ void showLcd(unsigned char pos, unsigned char val){
 	}
 }
 
+int sumLcdVal(){
+    int answer;
+    answer = lcdVal[3] + lcdVal[2]*10 + lcdVal[1]*100 + lcdVal[0]*1000;
+    return answer;
+}
+
 void addLcd(unsigned char ix){
     lcdVal[ix]++;
     if (lcdVal[ix]>9){
@@ -115,17 +108,29 @@ void addLcd(unsigned char ix){
             for (int i = 0; i < 4; i++){
                 lcdVal[i] = 0;
             }
-      //      showLcd2();
             return;
         }
         addLcd(ix-1);
     }
-    //showLcd2();
+}
+
+void minusLcd(unsigned char ix){
+    if (lcdVal[ix]!=0){
+        lcdVal[ix]--;
+    } else {
+        lcdVal[ix] = 9;
+        if (ix == 3){
+            for (int i = 0; i < 4; i++){
+                lcdVal[i] = 9;
+            }
+            return;
+        }
+        minusLcd(ix+1);
+    }
 }
 
 void setLcd(unsigned char pos, unsigned char val){
 	lcdVal[pos] = val;
-    //showLcd(pos, val);
 }
 
 /*

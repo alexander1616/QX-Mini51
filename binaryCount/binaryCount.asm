@@ -16,7 +16,7 @@
 	.globl _getMode
 	.globl _readButton
 	.globl _showLcd2
-	.globl _minusLcd
+	.globl _minusLcd2
 	.globl _addLcd
 	.globl _TF2
 	.globl _EXF2
@@ -465,181 +465,189 @@ _delay3:
 ;	 function binaryCount
 ;	-----------------------------------------
 _binaryCount:
-;	binaryCount.c:58: for (i = 0; i < 255; i++){
+;	binaryCount.c:53: for (i = 0; i < 255; i++){
 	mov	r7,#0x00
 	mov	r6,#0xff
 00104$:
-;	binaryCount.c:59: P1 = val--;
+;	binaryCount.c:54: P1 = val--;
 	mov	_P1,r6
 	dec	r6
-;	binaryCount.c:64: delay(50);
+;	binaryCount.c:55: delay(50);
 	mov	dptr,#0x0032
 	push	ar7
 	push	ar6
 	lcall	_delay
-;	binaryCount.c:65: if (getMode()){
+;	binaryCount.c:56: if (getMode()){
 	lcall	_getMode
 	mov	a,dpl
 	pop	ar6
 	pop	ar7
 	jz	00105$
-;	binaryCount.c:66: return;
+;	binaryCount.c:57: return;
 	ret
 00105$:
-;	binaryCount.c:58: for (i = 0; i < 255; i++){
+;	binaryCount.c:53: for (i = 0; i < 255; i++){
 	inc	r7
 	cjne	r7,#0xff,00117$
 00117$:
 	jc	00104$
-;	binaryCount.c:69: }
+;	binaryCount.c:60: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'digitDisplay_helper'
 ;------------------------------------------------------------
-;key                       Allocated to registers r7 
+;button                    Allocated to registers r7 
 ;------------------------------------------------------------
-;	binaryCount.c:71: unsigned char digitDisplay_helper(){
+;	binaryCount.c:62: unsigned char digitDisplay_helper(){
 ;	-----------------------------------------
 ;	 function digitDisplay_helper
 ;	-----------------------------------------
 _digitDisplay_helper:
-;	binaryCount.c:73: key = readButton();
+;	binaryCount.c:64: button = readButton();
 	lcall	_readButton
 	mov	r7,dpl
-;	binaryCount.c:74: if (key == 1){
-	cjne	r7,#0x01,00109$
-;	binaryCount.c:75: mode++;
+;	binaryCount.c:65: switch (button){
+	cjne	r7,#0x01,00125$
+	sjmp	00101$
+00125$:
+	cjne	r7,#0x02,00126$
+	sjmp	00102$
+00126$:
+	cjne	r7,#0x03,00127$
+	sjmp	00103$
+00127$:
+;	binaryCount.c:66: case 1:
+	cjne	r7,#0x04,00106$
+	sjmp	00104$
+00101$:
+;	binaryCount.c:67: mode++;
 	inc	_mode
-;	binaryCount.c:76: if (mode > 2){
-	mov	a,_mode
-	add	a,#0xff - 0x02
-	jnc	00102$
-;	binaryCount.c:77: mode = 0;
-	mov	_mode,#0x00
-00102$:
-;	binaryCount.c:79: return 1;
+;	binaryCount.c:68: return 1;
 	mov	dpl,#0x01
+;	binaryCount.c:69: case 2:
 	ret
-00109$:
-;	binaryCount.c:80: } else if (key == 3){
-	cjne	r7,#0x03,00106$
-;	binaryCount.c:81: addLcd(3);
+00102$:
+;	binaryCount.c:70: minusLcd2(3);
+	mov	dpl,#0x03
+	lcall	_minusLcd2
+;	binaryCount.c:71: break;
+;	binaryCount.c:72: case 3:
+	sjmp	00106$
+00103$:
+;	binaryCount.c:73: addLcd(3);
 	mov	dpl,#0x03
 	lcall	_addLcd
-;	binaryCount.c:82: return 0;
-	mov	dpl,#0x00
+;	binaryCount.c:74: break;
+;	binaryCount.c:75: case 4:
+	sjmp	00106$
+00104$:
+;	binaryCount.c:76: mode++;
+	inc	_mode
+;	binaryCount.c:77: return 1;
+	mov	dpl,#0x01
+;	binaryCount.c:82: }
 	ret
 00106$:
-;	binaryCount.c:83: } else if (key == 4){
-	cjne	r7,#0x04,00110$
-;	binaryCount.c:84: minusLcd(3);
-	mov	dpl,#0x03
-	lcall	_minusLcd
-;	binaryCount.c:85: return 0;
+;	binaryCount.c:83: return 0;
 	mov	dpl,#0x00
-	ret
-00110$:
-;	binaryCount.c:87: return 0;
-	mov	dpl,#0x00
-;	binaryCount.c:88: }
+;	binaryCount.c:84: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'digitDisplay'
 ;------------------------------------------------------------
-;	binaryCount.c:91: void digitDisplay(){
+;	binaryCount.c:87: void digitDisplay(){
 ;	-----------------------------------------
 ;	 function digitDisplay
 ;	-----------------------------------------
 _digitDisplay:
-;	binaryCount.c:92: if (digitDisplay_helper()){
+;	binaryCount.c:88: showLcd2();
+	lcall	_showLcd2
+;	binaryCount.c:89: if (digitDisplay_helper()){
 	lcall	_digitDisplay_helper
 	mov	a,dpl
-	jz	00102$
-;	binaryCount.c:93: return;
+	jz	00103$
+;	binaryCount.c:90: return;
+00103$:
+;	binaryCount.c:92: }
 	ret
-00102$:
-;	binaryCount.c:95: delay3(50);
-	mov	dptr,#0x0032
-;	binaryCount.c:96: }
-	ljmp	_delay3
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'cylon'
 ;------------------------------------------------------------
 ;val                       Allocated to registers r5 
 ;i                         Allocated to registers r6 
 ;------------------------------------------------------------
-;	binaryCount.c:98: void cylon(){
+;	binaryCount.c:94: void cylon(){
 ;	-----------------------------------------
 ;	 function cylon
 ;	-----------------------------------------
 _cylon:
-;	binaryCount.c:100: val = 0xFE;
+;	binaryCount.c:96: val = 0xFE;
 	mov	r7,#0xfe
-;	binaryCount.c:101: for (i = 0; i < 7; i++){
+;	binaryCount.c:97: for (i = 0; i < 7; i++){
 	mov	r6,#0x00
 00107$:
-;	binaryCount.c:102: P1 = val;
+;	binaryCount.c:98: P1 = val;
 	mov	_P1,r7
-;	binaryCount.c:103: val = val<<1;
+;	binaryCount.c:99: val = val<<1;
 	mov	ar5,r7
 	mov	a,r5
 	add	a,r5
 	mov	r5,a
-;	binaryCount.c:104: val = val | 0x01;
+;	binaryCount.c:100: val = val | 0x01;
 	orl	ar5,#0x01
 	mov	ar7,r5
-;	binaryCount.c:108: delay2(50);
+;	binaryCount.c:104: delay2(50);
 	mov	dptr,#0x0032
 	push	ar7
 	push	ar6
 	lcall	_delay2
-;	binaryCount.c:109: if (getMode()){
+;	binaryCount.c:105: if (getMode()){
 	lcall	_getMode
 	mov	a,dpl
 	pop	ar6
 	pop	ar7
 	jz	00108$
-;	binaryCount.c:110: return;
+;	binaryCount.c:106: return;
 	ret
 00108$:
-;	binaryCount.c:101: for (i = 0; i < 7; i++){
+;	binaryCount.c:97: for (i = 0; i < 7; i++){
 	inc	r6
 	cjne	r6,#0x07,00139$
 00139$:
 	jc	00107$
-;	binaryCount.c:113: for (i = 0; i < 7; i++){
+;	binaryCount.c:109: for (i = 0; i < 7; i++){
 	mov	r6,#0x00
 00109$:
-;	binaryCount.c:114: P1 = val;
-;	binaryCount.c:115: val = val>>1;
+;	binaryCount.c:110: P1 = val;
+;	binaryCount.c:111: val = val>>1;
 	mov	a,r7
 	mov	_P1,a
 	clr	c
 	rrc	a
 	mov	r5,a
-;	binaryCount.c:116: val = val | 0x80;
+;	binaryCount.c:112: val = val | 0x80;
 	orl	ar5,#0x80
 	mov	ar7,r5
-;	binaryCount.c:120: delay2(50);
+;	binaryCount.c:116: delay2(50);
 	mov	dptr,#0x0032
 	push	ar7
 	push	ar6
 	lcall	_delay2
-;	binaryCount.c:121: if (getMode()){
+;	binaryCount.c:117: if (getMode()){
 	lcall	_getMode
 	mov	a,dpl
 	pop	ar6
 	pop	ar7
 	jz	00110$
-;	binaryCount.c:122: return;
+;	binaryCount.c:118: return;
 	ret
 00110$:
-;	binaryCount.c:113: for (i = 0; i < 7; i++){
+;	binaryCount.c:109: for (i = 0; i < 7; i++){
 	inc	r6
 	cjne	r6,#0x07,00142$
 00142$:
 	jc	00109$
-;	binaryCount.c:125: }
+;	binaryCount.c:121: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'dualCylon'
@@ -648,60 +656,60 @@ _cylon:
 ;val2                      Allocated to registers r4 
 ;i                         Allocated to registers r5 
 ;------------------------------------------------------------
-;	binaryCount.c:127: void dualCylon(){
+;	binaryCount.c:123: void dualCylon(){
 ;	-----------------------------------------
 ;	 function dualCylon
 ;	-----------------------------------------
 _dualCylon:
-;	binaryCount.c:129: val1 = 0xFE;
+;	binaryCount.c:125: val1 = 0xFE;
 	mov	r7,#0xfe
-;	binaryCount.c:130: val2 = 0x7F;
+;	binaryCount.c:126: val2 = 0x7F;
 	mov	r6,#0x7f
-;	binaryCount.c:131: for (i = 0; i < 6; i++){
+;	binaryCount.c:127: for (i = 0; i < 6; i++){
 	mov	r5,#0x00
 00104$:
-;	binaryCount.c:132: P1 = val1&val2;
+;	binaryCount.c:128: P1 = val1&val2;
 	mov	a,r6
 	anl	a,r7
 	mov	_P1,a
-;	binaryCount.c:133: val1 = val1<<1;
+;	binaryCount.c:129: val1 = val1<<1;
 	mov	ar4,r7
 	mov	a,r4
 	add	a,r4
 	mov	r4,a
-;	binaryCount.c:134: val1 = val1|0x01;
+;	binaryCount.c:130: val1 = val1|0x01;
 	orl	ar4,#0x01
 	mov	ar7,r4
-;	binaryCount.c:136: val2 = val2>>1;
+;	binaryCount.c:132: val2 = val2>>1;
 	mov	a,r6
 	clr	c
 	rrc	a
 	mov	r4,a
-;	binaryCount.c:137: val2 = val2|0x80;
+;	binaryCount.c:133: val2 = val2|0x80;
 	orl	ar4,#0x80
 	mov	ar6,r4
-;	binaryCount.c:141: delay2(50);
+;	binaryCount.c:137: delay2(50);
 	mov	dptr,#0x0032
 	push	ar7
 	push	ar6
 	push	ar5
 	lcall	_delay2
-;	binaryCount.c:142: if (getMode()){
+;	binaryCount.c:138: if (getMode()){
 	lcall	_getMode
 	mov	a,dpl
 	pop	ar5
 	pop	ar6
 	pop	ar7
 	jz	00105$
-;	binaryCount.c:143: return;
+;	binaryCount.c:139: return;
 	ret
 00105$:
-;	binaryCount.c:131: for (i = 0; i < 6; i++){
+;	binaryCount.c:127: for (i = 0; i < 6; i++){
 	inc	r5
 	cjne	r5,#0x06,00119$
 00119$:
 	jc	00104$
-;	binaryCount.c:146: }
+;	binaryCount.c:142: }
 	ret
 	.area CSEG    (CODE)
 	.area CONST   (CODE)

@@ -8,8 +8,10 @@
 ;--------------------------------------------------------
 ; Public variables in this module
 ;--------------------------------------------------------
+	.globl _main
 	.globl _readButton
 	.globl _readButton_helper
+	.globl _showLcd
 	.globl _TF2
 	.globl _EXF2
 	.globl _RCLK
@@ -274,6 +276,13 @@ _readButton_buttonBucket_65536_10:
 ;--------------------------------------------------------
 	.area	OSEG    (OVR,DATA)
 ;--------------------------------------------------------
+; Stack segment in internal ram 
+;--------------------------------------------------------
+	.area	SSEG
+__start__stack:
+	.ds	1
+
+;--------------------------------------------------------
 ; indirectly addressable internal ram data
 ;--------------------------------------------------------
 	.area ISEG    (DATA)
@@ -313,17 +322,34 @@ _readButton_buttonBucket_65536_10:
 	.area GSFINAL (CODE)
 	.area CSEG    (CODE)
 ;--------------------------------------------------------
+; interrupt vector 
+;--------------------------------------------------------
+	.area HOME    (CODE)
+__interrupt_vect:
+	ljmp	__sdcc_gsinit_startup
+;--------------------------------------------------------
 ; global & static initialisations
 ;--------------------------------------------------------
 	.area HOME    (CODE)
 	.area GSINIT  (CODE)
 	.area GSFINAL (CODE)
 	.area GSINIT  (CODE)
+	.globl __sdcc_gsinit_startup
+	.globl __sdcc_program_startup
+	.globl __start__stack
+	.globl __mcs51_genXINIT
+	.globl __mcs51_genXRAMCLEAR
+	.globl __mcs51_genRAMCLEAR
+	.area GSFINAL (CODE)
+	ljmp	__sdcc_program_startup
 ;--------------------------------------------------------
 ; Home
 ;--------------------------------------------------------
 	.area HOME    (CODE)
 	.area HOME    (CODE)
+__sdcc_program_startup:
+	ljmp	_main
+;	return from main will return to caller
 ;--------------------------------------------------------
 ; code
 ;--------------------------------------------------------
@@ -378,9 +404,10 @@ _readButton_helper:
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'readButton'
 ;------------------------------------------------------------
-;valb                      Allocated to registers r6 
+;valb                      Allocated to registers r5 
 ;buttonBucket              Allocated with name '_readButton_buttonBucket_65536_10'
-;x                         Allocated to registers r7 
+;x                         Allocated to registers r6 
+;z                         Allocated to registers r7 
 ;store                     Allocated to registers r7 
 ;y                         Allocated to registers 
 ;------------------------------------------------------------
@@ -399,7 +426,7 @@ _readButton:
 	lcall	_readButton_helper
 	mov	a,dpl
 	mov	r6,a
-	jz	00108$
+	jz	00109$
 ;	buttonPress.c:24: buttonBucket[valb]++;
 	mov	a,r6
 	add	a,#_readButton_buttonBucket_65536_10
@@ -407,42 +434,53 @@ _readButton:
 	mov	a,@r1
 	inc	a
 	mov	@r1,a
-;	buttonPress.c:25: for (char x = 0; x < 100; x++){
-	mov	r7,#0x00
+;	buttonPress.c:26: z = 5;
+	mov	r7,#0x05
+00113$:
+;	buttonPress.c:27: for (; z > 0; z--){
+	mov	a,r7
+	jz	00104$
+;	buttonPress.c:28: for (x = 200; x > 0; x--){
+	mov	r6,#0xc8
 00110$:
-	cjne	r7,#0x64,00155$
-00155$:
-	jnc	00103$
-;	buttonPress.c:26: valb = readButton_helper();
+;	buttonPress.c:29: valb = readButton_helper();
 	push	ar7
+	push	ar6
 	lcall	_readButton_helper
-	mov	r6,dpl
+	mov	r5,dpl
+	pop	ar6
 	pop	ar7
-;	buttonPress.c:27: if (valb){
-	mov	a,r6
+;	buttonPress.c:30: if (valb){
+	mov	a,r5
 	jz	00111$
-;	buttonPress.c:28: buttonBucket[valb]++;
-	mov	a,r6
+;	buttonPress.c:31: buttonBucket[valb]++;
+	mov	a,r5
 	add	a,#_readButton_buttonBucket_65536_10
 	mov	r1,a
 	mov	a,@r1
-	mov	r6,a
+	mov	r5,a
 	inc	a
 	mov	@r1,a
 00111$:
-;	buttonPress.c:25: for (char x = 0; x < 100; x++){
-	inc	r7
-	sjmp	00110$
-00103$:
-;	buttonPress.c:31: char store = 0;
+;	buttonPress.c:28: for (x = 200; x > 0; x--){
+	mov	a,r6
+	dec	a
+	mov	r5,a
+	mov	r6,a
+	jnz	00110$
+;	buttonPress.c:27: for (; z > 0; z--){
+	dec	r7
+	sjmp	00113$
+00104$:
+;	buttonPress.c:35: char store = 0;
 	mov	r7,#0x00
-;	buttonPress.c:32: for (char y = 1; y < 4; y++){
+;	buttonPress.c:36: for (char y = 1; y < 4; y++){
 	mov	r6,#0x01
-00113$:
-	cjne	r6,#0x04,00158$
-00158$:
-	jnc	00106$
-;	buttonPress.c:33: if (buttonBucket[y] > buttonBucket[store]){
+00116$:
+	cjne	r6,#0x04,00175$
+00175$:
+	jnc	00107$
+;	buttonPress.c:37: if (buttonBucket[y] > buttonBucket[store]){
 	mov	a,r6
 	add	a,#_readButton_buttonBucket_65536_10
 	mov	r1,a
@@ -454,22 +492,83 @@ _readButton:
 	clr	c
 	mov	a,r4
 	subb	a,r5
-	jnc	00114$
-;	buttonPress.c:34: store = y;
+	jnc	00117$
+;	buttonPress.c:38: store = y;
 	mov	ar7,r6
-00114$:
-;	buttonPress.c:32: for (char y = 1; y < 4; y++){
+00117$:
+;	buttonPress.c:36: for (char y = 1; y < 4; y++){
 	inc	r6
-	sjmp	00113$
-00106$:
-;	buttonPress.c:37: return store;	
+	sjmp	00116$
+00107$:
+;	buttonPress.c:41: return store;	
 	mov	dpl,r7
 	ret
-00108$:
-;	buttonPress.c:39: return 0;
+00109$:
+;	buttonPress.c:43: return 0;
 	mov	dpl,#0x00
-;	buttonPress.c:40: }
+;	buttonPress.c:44: }
 	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'main'
+;------------------------------------------------------------
+;button                    Allocated to registers r7 
+;------------------------------------------------------------
+;	buttonPress.c:45: void main (){
+;	-----------------------------------------
+;	 function main
+;	-----------------------------------------
+_main:
+;	buttonPress.c:46: while (1) {
+00108$:
+;	buttonPress.c:48: button = readButton();
+	lcall	_readButton
+	mov	r7,dpl
+;	buttonPress.c:49: switch (button){
+	cjne	r7,#0x01,00132$
+	sjmp	00101$
+00132$:
+	cjne	r7,#0x02,00133$
+	sjmp	00102$
+00133$:
+	cjne	r7,#0x03,00134$
+	sjmp	00103$
+00134$:
+;	buttonPress.c:50: case 1:
+	cjne	r7,#0x04,00108$
+	sjmp	00104$
+00101$:
+;	buttonPress.c:51: showLcd(0, 1);
+	mov	_showLcd_PARM_2,#0x01
+	mov	dpl,#0x00
+	lcall	_showLcd
+;	buttonPress.c:52: break;
+;	buttonPress.c:53: case 2:
+	sjmp	00108$
+00102$:
+;	buttonPress.c:54: showLcd(1, 2);
+	mov	_showLcd_PARM_2,#0x02
+	mov	dpl,#0x01
+	lcall	_showLcd
+;	buttonPress.c:55: break;
+;	buttonPress.c:56: case 3:
+	sjmp	00108$
+00103$:
+;	buttonPress.c:57: showLcd(2, 3);
+	mov	_showLcd_PARM_2,#0x03
+	mov	dpl,#0x02
+	lcall	_showLcd
+;	buttonPress.c:58: break;
+;	buttonPress.c:59: case 4:
+	sjmp	00108$
+00104$:
+;	buttonPress.c:60: showLcd(3, 4);
+	mov	_showLcd_PARM_2,#0x04
+	mov	dpl,#0x03
+	lcall	_showLcd
+;	buttonPress.c:61: break;
+;	buttonPress.c:64: }
+;	buttonPress.c:66: }
+	sjmp	00108$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
 	.area XINIT   (CODE)

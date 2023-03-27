@@ -24,32 +24,19 @@ void main(){
         button = readButton();
         if (button == 1){
             mode++;
-            /*if (mode > 3){
-                mode = 0;
-            }
-            */
         }
-       
 	    switch (mode){
 	   	    case 0:
                 dualCylon();
-                //binaryCount();
-                //mode++;
-                //showLcd(0, 1);
 			    break;
 		    case 1:
                 cylon();
-                //mode++;
-                //showLcd(1, 2);
 			    break;
 		    case 2:
                 binaryCount();
-                //mode = 0;
-                //showLcd(2, 3);
 			    break;
 		    case 3:
                 digitDisplay();
-                //showLcd(3, 4);
 			    break;
             default:
                 mode = 0;

@@ -16,7 +16,7 @@
                                      16 	.globl _getMode
                                      17 	.globl _readButton
                                      18 	.globl _showLcd2
-                                     19 	.globl _minusLcd
+                                     19 	.globl _minusLcd2
                                      20 	.globl _addLcd
                                      21 	.globl _TF2
                                      22 	.globl _EXF2
@@ -465,245 +465,253 @@
                                     465 ;	 function binaryCount
                                     466 ;	-----------------------------------------
       000053                        467 _binaryCount:
-                                    468 ;	binaryCount.c:58: for (i = 0; i < 255; i++){
+                                    468 ;	binaryCount.c:53: for (i = 0; i < 255; i++){
       000053 7F 00            [12]  469 	mov	r7,#0x00
       000055 7E FF            [12]  470 	mov	r6,#0xff
       000057                        471 00104$:
-                                    472 ;	binaryCount.c:59: P1 = val--;
+                                    472 ;	binaryCount.c:54: P1 = val--;
       000057 8E 90            [24]  473 	mov	_P1,r6
       000059 1E               [12]  474 	dec	r6
-                                    475 ;	binaryCount.c:64: delay(50);
+                                    475 ;	binaryCount.c:55: delay(50);
       00005A 90 00 32         [24]  476 	mov	dptr,#0x0032
       00005D C0 07            [24]  477 	push	ar7
       00005F C0 06            [24]  478 	push	ar6
       000061 12r00r00         [24]  479 	lcall	_delay
-                                    480 ;	binaryCount.c:65: if (getMode()){
+                                    480 ;	binaryCount.c:56: if (getMode()){
       000064 12r00r00         [24]  481 	lcall	_getMode
       000067 E5 82            [12]  482 	mov	a,dpl
       000069 D0 06            [24]  483 	pop	ar6
       00006B D0 07            [24]  484 	pop	ar7
       00006D 60 01            [24]  485 	jz	00105$
-                                    486 ;	binaryCount.c:66: return;
+                                    486 ;	binaryCount.c:57: return;
       00006F 22               [24]  487 	ret
       000070                        488 00105$:
-                                    489 ;	binaryCount.c:58: for (i = 0; i < 255; i++){
+                                    489 ;	binaryCount.c:53: for (i = 0; i < 255; i++){
       000070 0F               [12]  490 	inc	r7
       000071 BF FF 00         [24]  491 	cjne	r7,#0xff,00117$
       000074                        492 00117$:
       000074 40 E1            [24]  493 	jc	00104$
-                                    494 ;	binaryCount.c:69: }
+                                    494 ;	binaryCount.c:60: }
       000076 22               [24]  495 	ret
                                     496 ;------------------------------------------------------------
                                     497 ;Allocation info for local variables in function 'digitDisplay_helper'
                                     498 ;------------------------------------------------------------
-                                    499 ;key                       Allocated to registers r7 
+                                    499 ;button                    Allocated to registers r7 
                                     500 ;------------------------------------------------------------
-                                    501 ;	binaryCount.c:71: unsigned char digitDisplay_helper(){
+                                    501 ;	binaryCount.c:62: unsigned char digitDisplay_helper(){
                                     502 ;	-----------------------------------------
                                     503 ;	 function digitDisplay_helper
                                     504 ;	-----------------------------------------
       000077                        505 _digitDisplay_helper:
-                                    506 ;	binaryCount.c:73: key = readButton();
+                                    506 ;	binaryCount.c:64: button = readButton();
       000077 12r00r00         [24]  507 	lcall	_readButton
       00007A AF 82            [24]  508 	mov	r7,dpl
-                                    509 ;	binaryCount.c:74: if (key == 1){
-      00007C BF 01 0F         [24]  510 	cjne	r7,#0x01,00109$
-                                    511 ;	binaryCount.c:75: mode++;
-      00007F 05*00            [12]  512 	inc	_mode
-                                    513 ;	binaryCount.c:76: if (mode > 2){
-      000081 E5*00            [12]  514 	mov	a,_mode
-      000083 24 FD            [12]  515 	add	a,#0xff - 0x02
-      000085 50 03            [24]  516 	jnc	00102$
-                                    517 ;	binaryCount.c:77: mode = 0;
-      000087 75*00 00         [24]  518 	mov	_mode,#0x00
-      00008A                        519 00102$:
-                                    520 ;	binaryCount.c:79: return 1;
-      00008A 75 82 01         [24]  521 	mov	dpl,#0x01
-      00008D 22               [24]  522 	ret
-      00008E                        523 00109$:
-                                    524 ;	binaryCount.c:80: } else if (key == 3){
-      00008E BF 03 0A         [24]  525 	cjne	r7,#0x03,00106$
-                                    526 ;	binaryCount.c:81: addLcd(3);
-      000091 75 82 03         [24]  527 	mov	dpl,#0x03
-      000094 12r00r00         [24]  528 	lcall	_addLcd
-                                    529 ;	binaryCount.c:82: return 0;
-      000097 75 82 00         [24]  530 	mov	dpl,#0x00
-      00009A 22               [24]  531 	ret
-      00009B                        532 00106$:
-                                    533 ;	binaryCount.c:83: } else if (key == 4){
-      00009B BF 04 0A         [24]  534 	cjne	r7,#0x04,00110$
-                                    535 ;	binaryCount.c:84: minusLcd(3);
-      00009E 75 82 03         [24]  536 	mov	dpl,#0x03
-      0000A1 12r00r00         [24]  537 	lcall	_minusLcd
-                                    538 ;	binaryCount.c:85: return 0;
-      0000A4 75 82 00         [24]  539 	mov	dpl,#0x00
-      0000A7 22               [24]  540 	ret
-      0000A8                        541 00110$:
-                                    542 ;	binaryCount.c:87: return 0;
-      0000A8 75 82 00         [24]  543 	mov	dpl,#0x00
-                                    544 ;	binaryCount.c:88: }
-      0000AB 22               [24]  545 	ret
-                                    546 ;------------------------------------------------------------
-                                    547 ;Allocation info for local variables in function 'digitDisplay'
-                                    548 ;------------------------------------------------------------
-                                    549 ;	binaryCount.c:91: void digitDisplay(){
-                                    550 ;	-----------------------------------------
-                                    551 ;	 function digitDisplay
-                                    552 ;	-----------------------------------------
-      0000AC                        553 _digitDisplay:
-                                    554 ;	binaryCount.c:92: if (digitDisplay_helper()){
-      0000AC 12r00r77         [24]  555 	lcall	_digitDisplay_helper
-      0000AF E5 82            [12]  556 	mov	a,dpl
-      0000B1 60 01            [24]  557 	jz	00102$
-                                    558 ;	binaryCount.c:93: return;
-      0000B3 22               [24]  559 	ret
-      0000B4                        560 00102$:
-                                    561 ;	binaryCount.c:95: delay3(50);
-      0000B4 90 00 32         [24]  562 	mov	dptr,#0x0032
-                                    563 ;	binaryCount.c:96: }
-      0000B7 02r00r30         [24]  564 	ljmp	_delay3
-                                    565 ;------------------------------------------------------------
-                                    566 ;Allocation info for local variables in function 'cylon'
-                                    567 ;------------------------------------------------------------
-                                    568 ;val                       Allocated to registers r5 
-                                    569 ;i                         Allocated to registers r6 
-                                    570 ;------------------------------------------------------------
-                                    571 ;	binaryCount.c:98: void cylon(){
-                                    572 ;	-----------------------------------------
-                                    573 ;	 function cylon
-                                    574 ;	-----------------------------------------
-      0000BA                        575 _cylon:
-                                    576 ;	binaryCount.c:100: val = 0xFE;
-      0000BA 7F FE            [12]  577 	mov	r7,#0xfe
-                                    578 ;	binaryCount.c:101: for (i = 0; i < 7; i++){
-      0000BC 7E 00            [12]  579 	mov	r6,#0x00
-      0000BE                        580 00107$:
-                                    581 ;	binaryCount.c:102: P1 = val;
-      0000BE 8F 90            [24]  582 	mov	_P1,r7
-                                    583 ;	binaryCount.c:103: val = val<<1;
-      0000C0 8F 05            [24]  584 	mov	ar5,r7
-      0000C2 ED               [12]  585 	mov	a,r5
-      0000C3 2D               [12]  586 	add	a,r5
-      0000C4 FD               [12]  587 	mov	r5,a
-                                    588 ;	binaryCount.c:104: val = val | 0x01;
-      0000C5 43 05 01         [24]  589 	orl	ar5,#0x01
-      0000C8 8D 07            [24]  590 	mov	ar7,r5
-                                    591 ;	binaryCount.c:108: delay2(50);
-      0000CA 90 00 32         [24]  592 	mov	dptr,#0x0032
-      0000CD C0 07            [24]  593 	push	ar7
-      0000CF C0 06            [24]  594 	push	ar6
-      0000D1 12r00r18         [24]  595 	lcall	_delay2
-                                    596 ;	binaryCount.c:109: if (getMode()){
-      0000D4 12r00r00         [24]  597 	lcall	_getMode
-      0000D7 E5 82            [12]  598 	mov	a,dpl
-      0000D9 D0 06            [24]  599 	pop	ar6
-      0000DB D0 07            [24]  600 	pop	ar7
-      0000DD 60 01            [24]  601 	jz	00108$
-                                    602 ;	binaryCount.c:110: return;
-      0000DF 22               [24]  603 	ret
-      0000E0                        604 00108$:
-                                    605 ;	binaryCount.c:101: for (i = 0; i < 7; i++){
-      0000E0 0E               [12]  606 	inc	r6
-      0000E1 BE 07 00         [24]  607 	cjne	r6,#0x07,00139$
-      0000E4                        608 00139$:
-      0000E4 40 D8            [24]  609 	jc	00107$
-                                    610 ;	binaryCount.c:113: for (i = 0; i < 7; i++){
-      0000E6 7E 00            [12]  611 	mov	r6,#0x00
-      0000E8                        612 00109$:
-                                    613 ;	binaryCount.c:114: P1 = val;
-                                    614 ;	binaryCount.c:115: val = val>>1;
-      0000E8 EF               [12]  615 	mov	a,r7
-      0000E9 F5 90            [12]  616 	mov	_P1,a
-      0000EB C3               [12]  617 	clr	c
-      0000EC 13               [12]  618 	rrc	a
-      0000ED FD               [12]  619 	mov	r5,a
-                                    620 ;	binaryCount.c:116: val = val | 0x80;
-      0000EE 43 05 80         [24]  621 	orl	ar5,#0x80
-      0000F1 8D 07            [24]  622 	mov	ar7,r5
-                                    623 ;	binaryCount.c:120: delay2(50);
-      0000F3 90 00 32         [24]  624 	mov	dptr,#0x0032
-      0000F6 C0 07            [24]  625 	push	ar7
-      0000F8 C0 06            [24]  626 	push	ar6
-      0000FA 12r00r18         [24]  627 	lcall	_delay2
-                                    628 ;	binaryCount.c:121: if (getMode()){
-      0000FD 12r00r00         [24]  629 	lcall	_getMode
-      000100 E5 82            [12]  630 	mov	a,dpl
-      000102 D0 06            [24]  631 	pop	ar6
-      000104 D0 07            [24]  632 	pop	ar7
-      000106 60 01            [24]  633 	jz	00110$
-                                    634 ;	binaryCount.c:122: return;
-      000108 22               [24]  635 	ret
-      000109                        636 00110$:
-                                    637 ;	binaryCount.c:113: for (i = 0; i < 7; i++){
-      000109 0E               [12]  638 	inc	r6
-      00010A BE 07 00         [24]  639 	cjne	r6,#0x07,00142$
-      00010D                        640 00142$:
-      00010D 40 D9            [24]  641 	jc	00109$
-                                    642 ;	binaryCount.c:125: }
-      00010F 22               [24]  643 	ret
-                                    644 ;------------------------------------------------------------
-                                    645 ;Allocation info for local variables in function 'dualCylon'
-                                    646 ;------------------------------------------------------------
-                                    647 ;val1                      Allocated to registers r4 
-                                    648 ;val2                      Allocated to registers r4 
-                                    649 ;i                         Allocated to registers r5 
-                                    650 ;------------------------------------------------------------
-                                    651 ;	binaryCount.c:127: void dualCylon(){
-                                    652 ;	-----------------------------------------
-                                    653 ;	 function dualCylon
-                                    654 ;	-----------------------------------------
-      000110                        655 _dualCylon:
-                                    656 ;	binaryCount.c:129: val1 = 0xFE;
-      000110 7F FE            [12]  657 	mov	r7,#0xfe
-                                    658 ;	binaryCount.c:130: val2 = 0x7F;
-      000112 7E 7F            [12]  659 	mov	r6,#0x7f
-                                    660 ;	binaryCount.c:131: for (i = 0; i < 6; i++){
-      000114 7D 00            [12]  661 	mov	r5,#0x00
-      000116                        662 00104$:
-                                    663 ;	binaryCount.c:132: P1 = val1&val2;
-      000116 EE               [12]  664 	mov	a,r6
-      000117 5F               [12]  665 	anl	a,r7
-      000118 F5 90            [12]  666 	mov	_P1,a
-                                    667 ;	binaryCount.c:133: val1 = val1<<1;
-      00011A 8F 04            [24]  668 	mov	ar4,r7
-      00011C EC               [12]  669 	mov	a,r4
-      00011D 2C               [12]  670 	add	a,r4
-      00011E FC               [12]  671 	mov	r4,a
-                                    672 ;	binaryCount.c:134: val1 = val1|0x01;
-      00011F 43 04 01         [24]  673 	orl	ar4,#0x01
-      000122 8C 07            [24]  674 	mov	ar7,r4
-                                    675 ;	binaryCount.c:136: val2 = val2>>1;
-      000124 EE               [12]  676 	mov	a,r6
-      000125 C3               [12]  677 	clr	c
-      000126 13               [12]  678 	rrc	a
-      000127 FC               [12]  679 	mov	r4,a
-                                    680 ;	binaryCount.c:137: val2 = val2|0x80;
-      000128 43 04 80         [24]  681 	orl	ar4,#0x80
-      00012B 8C 06            [24]  682 	mov	ar6,r4
-                                    683 ;	binaryCount.c:141: delay2(50);
-      00012D 90 00 32         [24]  684 	mov	dptr,#0x0032
-      000130 C0 07            [24]  685 	push	ar7
-      000132 C0 06            [24]  686 	push	ar6
-      000134 C0 05            [24]  687 	push	ar5
-      000136 12r00r18         [24]  688 	lcall	_delay2
-                                    689 ;	binaryCount.c:142: if (getMode()){
-      000139 12r00r00         [24]  690 	lcall	_getMode
-      00013C E5 82            [12]  691 	mov	a,dpl
-      00013E D0 05            [24]  692 	pop	ar5
-      000140 D0 06            [24]  693 	pop	ar6
-      000142 D0 07            [24]  694 	pop	ar7
-      000144 60 01            [24]  695 	jz	00105$
-                                    696 ;	binaryCount.c:143: return;
-      000146 22               [24]  697 	ret
-      000147                        698 00105$:
-                                    699 ;	binaryCount.c:131: for (i = 0; i < 6; i++){
-      000147 0D               [12]  700 	inc	r5
-      000148 BD 06 00         [24]  701 	cjne	r5,#0x06,00119$
-      00014B                        702 00119$:
-      00014B 40 C9            [24]  703 	jc	00104$
-                                    704 ;	binaryCount.c:146: }
-      00014D 22               [24]  705 	ret
-                                    706 	.area CSEG    (CODE)
-                                    707 	.area CONST   (CODE)
-                                    708 	.area XINIT   (CODE)
-                                    709 	.area CABS    (ABS,CODE)
+                                    509 ;	binaryCount.c:65: switch (button){
+      00007C BF 01 02         [24]  510 	cjne	r7,#0x01,00125$
+      00007F 80 0F            [24]  511 	sjmp	00101$
+      000081                        512 00125$:
+      000081 BF 02 02         [24]  513 	cjne	r7,#0x02,00126$
+      000084 80 10            [24]  514 	sjmp	00102$
+      000086                        515 00126$:
+      000086 BF 03 02         [24]  516 	cjne	r7,#0x03,00127$
+      000089 80 13            [24]  517 	sjmp	00103$
+      00008B                        518 00127$:
+                                    519 ;	binaryCount.c:66: case 1:
+      00008B BF 04 1E         [24]  520 	cjne	r7,#0x04,00106$
+      00008E 80 16            [24]  521 	sjmp	00104$
+      000090                        522 00101$:
+                                    523 ;	binaryCount.c:67: mode++;
+      000090 05*00            [12]  524 	inc	_mode
+                                    525 ;	binaryCount.c:68: return 1;
+      000092 75 82 01         [24]  526 	mov	dpl,#0x01
+                                    527 ;	binaryCount.c:69: case 2:
+      000095 22               [24]  528 	ret
+      000096                        529 00102$:
+                                    530 ;	binaryCount.c:70: minusLcd2(3);
+      000096 75 82 03         [24]  531 	mov	dpl,#0x03
+      000099 12r00r00         [24]  532 	lcall	_minusLcd2
+                                    533 ;	binaryCount.c:71: break;
+                                    534 ;	binaryCount.c:72: case 3:
+      00009C 80 0E            [24]  535 	sjmp	00106$
+      00009E                        536 00103$:
+                                    537 ;	binaryCount.c:73: addLcd(3);
+      00009E 75 82 03         [24]  538 	mov	dpl,#0x03
+      0000A1 12r00r00         [24]  539 	lcall	_addLcd
+                                    540 ;	binaryCount.c:74: break;
+                                    541 ;	binaryCount.c:75: case 4:
+      0000A4 80 06            [24]  542 	sjmp	00106$
+      0000A6                        543 00104$:
+                                    544 ;	binaryCount.c:76: mode++;
+      0000A6 05*00            [12]  545 	inc	_mode
+                                    546 ;	binaryCount.c:77: return 1;
+      0000A8 75 82 01         [24]  547 	mov	dpl,#0x01
+                                    548 ;	binaryCount.c:82: }
+      0000AB 22               [24]  549 	ret
+      0000AC                        550 00106$:
+                                    551 ;	binaryCount.c:83: return 0;
+      0000AC 75 82 00         [24]  552 	mov	dpl,#0x00
+                                    553 ;	binaryCount.c:84: }
+      0000AF 22               [24]  554 	ret
+                                    555 ;------------------------------------------------------------
+                                    556 ;Allocation info for local variables in function 'digitDisplay'
+                                    557 ;------------------------------------------------------------
+                                    558 ;	binaryCount.c:87: void digitDisplay(){
+                                    559 ;	-----------------------------------------
+                                    560 ;	 function digitDisplay
+                                    561 ;	-----------------------------------------
+      0000B0                        562 _digitDisplay:
+                                    563 ;	binaryCount.c:88: showLcd2();
+      0000B0 12r00r00         [24]  564 	lcall	_showLcd2
+                                    565 ;	binaryCount.c:89: if (digitDisplay_helper()){
+      0000B3 12r00r77         [24]  566 	lcall	_digitDisplay_helper
+      0000B6 E5 82            [12]  567 	mov	a,dpl
+      0000B8 60 00            [24]  568 	jz	00103$
+                                    569 ;	binaryCount.c:90: return;
+      0000BA                        570 00103$:
+                                    571 ;	binaryCount.c:92: }
+      0000BA 22               [24]  572 	ret
+                                    573 ;------------------------------------------------------------
+                                    574 ;Allocation info for local variables in function 'cylon'
+                                    575 ;------------------------------------------------------------
+                                    576 ;val                       Allocated to registers r5 
+                                    577 ;i                         Allocated to registers r6 
+                                    578 ;------------------------------------------------------------
+                                    579 ;	binaryCount.c:94: void cylon(){
+                                    580 ;	-----------------------------------------
+                                    581 ;	 function cylon
+                                    582 ;	-----------------------------------------
+      0000BB                        583 _cylon:
+                                    584 ;	binaryCount.c:96: val = 0xFE;
+      0000BB 7F FE            [12]  585 	mov	r7,#0xfe
+                                    586 ;	binaryCount.c:97: for (i = 0; i < 7; i++){
+      0000BD 7E 00            [12]  587 	mov	r6,#0x00
+      0000BF                        588 00107$:
+                                    589 ;	binaryCount.c:98: P1 = val;
+      0000BF 8F 90            [24]  590 	mov	_P1,r7
+                                    591 ;	binaryCount.c:99: val = val<<1;
+      0000C1 8F 05            [24]  592 	mov	ar5,r7
+      0000C3 ED               [12]  593 	mov	a,r5
+      0000C4 2D               [12]  594 	add	a,r5
+      0000C5 FD               [12]  595 	mov	r5,a
+                                    596 ;	binaryCount.c:100: val = val | 0x01;
+      0000C6 43 05 01         [24]  597 	orl	ar5,#0x01
+      0000C9 8D 07            [24]  598 	mov	ar7,r5
+                                    599 ;	binaryCount.c:104: delay2(50);
+      0000CB 90 00 32         [24]  600 	mov	dptr,#0x0032
+      0000CE C0 07            [24]  601 	push	ar7
+      0000D0 C0 06            [24]  602 	push	ar6
+      0000D2 12r00r18         [24]  603 	lcall	_delay2
+                                    604 ;	binaryCount.c:105: if (getMode()){
+      0000D5 12r00r00         [24]  605 	lcall	_getMode
+      0000D8 E5 82            [12]  606 	mov	a,dpl
+      0000DA D0 06            [24]  607 	pop	ar6
+      0000DC D0 07            [24]  608 	pop	ar7
+      0000DE 60 01            [24]  609 	jz	00108$
+                                    610 ;	binaryCount.c:106: return;
+      0000E0 22               [24]  611 	ret
+      0000E1                        612 00108$:
+                                    613 ;	binaryCount.c:97: for (i = 0; i < 7; i++){
+      0000E1 0E               [12]  614 	inc	r6
+      0000E2 BE 07 00         [24]  615 	cjne	r6,#0x07,00139$
+      0000E5                        616 00139$:
+      0000E5 40 D8            [24]  617 	jc	00107$
+                                    618 ;	binaryCount.c:109: for (i = 0; i < 7; i++){
+      0000E7 7E 00            [12]  619 	mov	r6,#0x00
+      0000E9                        620 00109$:
+                                    621 ;	binaryCount.c:110: P1 = val;
+                                    622 ;	binaryCount.c:111: val = val>>1;
+      0000E9 EF               [12]  623 	mov	a,r7
+      0000EA F5 90            [12]  624 	mov	_P1,a
+      0000EC C3               [12]  625 	clr	c
+      0000ED 13               [12]  626 	rrc	a
+      0000EE FD               [12]  627 	mov	r5,a
+                                    628 ;	binaryCount.c:112: val = val | 0x80;
+      0000EF 43 05 80         [24]  629 	orl	ar5,#0x80
+      0000F2 8D 07            [24]  630 	mov	ar7,r5
+                                    631 ;	binaryCount.c:116: delay2(50);
+      0000F4 90 00 32         [24]  632 	mov	dptr,#0x0032
+      0000F7 C0 07            [24]  633 	push	ar7
+      0000F9 C0 06            [24]  634 	push	ar6
+      0000FB 12r00r18         [24]  635 	lcall	_delay2
+                                    636 ;	binaryCount.c:117: if (getMode()){
+      0000FE 12r00r00         [24]  637 	lcall	_getMode
+      000101 E5 82            [12]  638 	mov	a,dpl
+      000103 D0 06            [24]  639 	pop	ar6
+      000105 D0 07            [24]  640 	pop	ar7
+      000107 60 01            [24]  641 	jz	00110$
+                                    642 ;	binaryCount.c:118: return;
+      000109 22               [24]  643 	ret
+      00010A                        644 00110$:
+                                    645 ;	binaryCount.c:109: for (i = 0; i < 7; i++){
+      00010A 0E               [12]  646 	inc	r6
+      00010B BE 07 00         [24]  647 	cjne	r6,#0x07,00142$
+      00010E                        648 00142$:
+      00010E 40 D9            [24]  649 	jc	00109$
+                                    650 ;	binaryCount.c:121: }
+      000110 22               [24]  651 	ret
+                                    652 ;------------------------------------------------------------
+                                    653 ;Allocation info for local variables in function 'dualCylon'
+                                    654 ;------------------------------------------------------------
+                                    655 ;val1                      Allocated to registers r4 
+                                    656 ;val2                      Allocated to registers r4 
+                                    657 ;i                         Allocated to registers r5 
+                                    658 ;------------------------------------------------------------
+                                    659 ;	binaryCount.c:123: void dualCylon(){
+                                    660 ;	-----------------------------------------
+                                    661 ;	 function dualCylon
+                                    662 ;	-----------------------------------------
+      000111                        663 _dualCylon:
+                                    664 ;	binaryCount.c:125: val1 = 0xFE;
+      000111 7F FE            [12]  665 	mov	r7,#0xfe
+                                    666 ;	binaryCount.c:126: val2 = 0x7F;
+      000113 7E 7F            [12]  667 	mov	r6,#0x7f
+                                    668 ;	binaryCount.c:127: for (i = 0; i < 6; i++){
+      000115 7D 00            [12]  669 	mov	r5,#0x00
+      000117                        670 00104$:
+                                    671 ;	binaryCount.c:128: P1 = val1&val2;
+      000117 EE               [12]  672 	mov	a,r6
+      000118 5F               [12]  673 	anl	a,r7
+      000119 F5 90            [12]  674 	mov	_P1,a
+                                    675 ;	binaryCount.c:129: val1 = val1<<1;
+      00011B 8F 04            [24]  676 	mov	ar4,r7
+      00011D EC               [12]  677 	mov	a,r4
+      00011E 2C               [12]  678 	add	a,r4
+      00011F FC               [12]  679 	mov	r4,a
+                                    680 ;	binaryCount.c:130: val1 = val1|0x01;
+      000120 43 04 01         [24]  681 	orl	ar4,#0x01
+      000123 8C 07            [24]  682 	mov	ar7,r4
+                                    683 ;	binaryCount.c:132: val2 = val2>>1;
+      000125 EE               [12]  684 	mov	a,r6
+      000126 C3               [12]  685 	clr	c
+      000127 13               [12]  686 	rrc	a
+      000128 FC               [12]  687 	mov	r4,a
+                                    688 ;	binaryCount.c:133: val2 = val2|0x80;
+      000129 43 04 80         [24]  689 	orl	ar4,#0x80
+      00012C 8C 06            [24]  690 	mov	ar6,r4
+                                    691 ;	binaryCount.c:137: delay2(50);
+      00012E 90 00 32         [24]  692 	mov	dptr,#0x0032
+      000131 C0 07            [24]  693 	push	ar7
+      000133 C0 06            [24]  694 	push	ar6
+      000135 C0 05            [24]  695 	push	ar5
+      000137 12r00r18         [24]  696 	lcall	_delay2
+                                    697 ;	binaryCount.c:138: if (getMode()){
+      00013A 12r00r00         [24]  698 	lcall	_getMode
+      00013D E5 82            [12]  699 	mov	a,dpl
+      00013F D0 05            [24]  700 	pop	ar5
+      000141 D0 06            [24]  701 	pop	ar6
+      000143 D0 07            [24]  702 	pop	ar7
+      000145 60 01            [24]  703 	jz	00105$
+                                    704 ;	binaryCount.c:139: return;
+      000147 22               [24]  705 	ret
+      000148                        706 00105$:
+                                    707 ;	binaryCount.c:127: for (i = 0; i < 6; i++){
+      000148 0D               [12]  708 	inc	r5
+      000149 BD 06 00         [24]  709 	cjne	r5,#0x06,00119$
+      00014C                        710 00119$:
+      00014C 40 C9            [24]  711 	jc	00104$
+                                    712 ;	binaryCount.c:142: }
+      00014E 22               [24]  713 	ret
+                                    714 	.area CSEG    (CODE)
+                                    715 	.area CONST   (CODE)
+                                    716 	.area XINIT   (CODE)
+                                    717 	.area CABS    (ABS,CODE)

@@ -50,17 +50,8 @@ static void delay3(unsigned int t){
 void binaryCount(){
 	unsigned char val, i;
 	val = 0xFF;
-    //lcdVal[0] = 0;
-    //lcdVal[1] = 0;
-    //lcdVal[2] = 0;
-    //lcdVal[3] = 0;
-	//showLcd2();
 	for (i = 0; i < 255; i++){
 		P1 = val--;
-		//addLcd(3);
-		/*if(delay(50)){
-            return;
-        }*/
         delay(50);
         if (getMode()){
             return;
@@ -69,30 +60,35 @@ void binaryCount(){
 }
 
 unsigned char digitDisplay_helper(){
-    unsigned char key;
-    key = readButton();
-    if (key == 1){
+    unsigned char button;
+    button = readButton();
+    switch (button){
+    case 1:
         mode++;
-        if (mode > 2){
-            mode = 0;
-        }
         return 1;
-    } else if (key == 3){
+    case 2:
+        minusLcd2(3);
+        break;
+    case 3:
         addLcd(3);
-        return 0;
-    } else if (key == 4){
-        minusLcd(3);
-        return 0;
+        break;
+    case 4:
+        mode++;
+        return 1;
+        //minusLcd2(3);
+        //break;
+    default:
+        break;
     }
     return 0;
 }
 
 
 void digitDisplay(){
+    showLcd2();
     if (digitDisplay_helper()){
         return;
     }
-    delay3(50);
 }
 
 void cylon(){

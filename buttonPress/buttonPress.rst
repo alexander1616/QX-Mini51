@@ -337,7 +337,7 @@
                                     337 ;	-----------------------------------------
                                     338 ;	 function readButton_helper
                                     339 ;	-----------------------------------------
-      000298                        340 _readButton_helper:
+      0003B9                        340 _readButton_helper:
                            000007   341 	ar7 = 0x07
                            000006   342 	ar6 = 0x06
                            000005   343 	ar5 = 0x05
@@ -347,130 +347,142 @@
                            000001   347 	ar1 = 0x01
                            000000   348 	ar0 = 0x00
                                     349 ;	buttonPress.c:6: button = 0;
-      000298 7F 00            [12]  350 	mov	r7,#0x00
+      0003B9 7F 00            [12]  350 	mov	r7,#0x00
                                     351 ;	buttonPress.c:7: if (P3_2 == 0){
-      00029A 20 B2 04         [24]  352 	jb	_P3_2,00110$
+      0003BB 20 B2 04         [24]  352 	jb	_P3_2,00110$
                                     353 ;	buttonPress.c:8: button = 4;
-      00029D 7F 04            [12]  354 	mov	r7,#0x04
-      00029F 80 13            [24]  355 	sjmp	00111$
-      0002A1                        356 00110$:
+      0003BE 7F 04            [12]  354 	mov	r7,#0x04
+      0003C0 80 13            [24]  355 	sjmp	00111$
+      0003C2                        356 00110$:
                                     357 ;	buttonPress.c:9: } else if (P3_3 == 0){
-      0002A1 20 B3 04         [24]  358 	jb	_P3_3,00107$
+      0003C2 20 B3 04         [24]  358 	jb	_P3_3,00107$
                                     359 ;	buttonPress.c:10: button = 3;
-      0002A4 7F 03            [12]  360 	mov	r7,#0x03
-      0002A6 80 0C            [24]  361 	sjmp	00111$
-      0002A8                        362 00107$:
+      0003C5 7F 03            [12]  360 	mov	r7,#0x03
+      0003C7 80 0C            [24]  361 	sjmp	00111$
+      0003C9                        362 00107$:
                                     363 ;	buttonPress.c:11: } else if (P3_4 == 0){
-      0002A8 20 B4 04         [24]  364 	jb	_P3_4,00104$
+      0003C9 20 B4 04         [24]  364 	jb	_P3_4,00104$
                                     365 ;	buttonPress.c:12: button = 2;
-      0002AB 7F 02            [12]  366 	mov	r7,#0x02
-      0002AD 80 05            [24]  367 	sjmp	00111$
-      0002AF                        368 00104$:
+      0003CC 7F 02            [12]  366 	mov	r7,#0x02
+      0003CE 80 05            [24]  367 	sjmp	00111$
+      0003D0                        368 00104$:
                                     369 ;	buttonPress.c:13: } else if (P3_5 == 0){
-      0002AF 20 B5 02         [24]  370 	jb	_P3_5,00111$
+      0003D0 20 B5 02         [24]  370 	jb	_P3_5,00111$
                                     371 ;	buttonPress.c:14: button = 1;
-      0002B2 7F 01            [12]  372 	mov	r7,#0x01
-      0002B4                        373 00111$:
+      0003D3 7F 01            [12]  372 	mov	r7,#0x01
+      0003D5                        373 00111$:
                                     374 ;	buttonPress.c:16: return button;
-      0002B4 8F 82            [24]  375 	mov	dpl,r7
+      0003D5 8F 82            [24]  375 	mov	dpl,r7
                                     376 ;	buttonPress.c:17: }
-      0002B6 22               [24]  377 	ret
+      0003D7 22               [24]  377 	ret
                                     378 ;------------------------------------------------------------
                                     379 ;Allocation info for local variables in function 'readButton'
                                     380 ;------------------------------------------------------------
-                                    381 ;valb                      Allocated to registers r6 
+                                    381 ;valb                      Allocated to registers r5 
                                     382 ;buttonBucket              Allocated with name '_readButton_buttonBucket_65536_10'
-                                    383 ;x                         Allocated to registers r7 
-                                    384 ;store                     Allocated to registers r7 
-                                    385 ;y                         Allocated to registers 
-                                    386 ;------------------------------------------------------------
-                                    387 ;	buttonPress.c:20: unsigned char readButton(){
-                                    388 ;	-----------------------------------------
-                                    389 ;	 function readButton
-                                    390 ;	-----------------------------------------
-      0002B7                        391 _readButton:
-                                    392 ;	buttonPress.c:22: unsigned char buttonBucket[5] = {0};
-      0002B7 75 18 00         [24]  393 	mov	_readButton_buttonBucket_65536_10,#0x00
-      0002BA 75 19 00         [24]  394 	mov	(_readButton_buttonBucket_65536_10 + 0x0001),#0x00
-      0002BD 75 1A 00         [24]  395 	mov	(_readButton_buttonBucket_65536_10 + 0x0002),#0x00
-      0002C0 75 1B 00         [24]  396 	mov	(_readButton_buttonBucket_65536_10 + 0x0003),#0x00
-      0002C3 75 1C 00         [24]  397 	mov	(_readButton_buttonBucket_65536_10 + 0x0004),#0x00
-                                    398 ;	buttonPress.c:23: if(valb = readButton_helper()){
-      0002C6 12 02 98         [24]  399 	lcall	_readButton_helper
-      0002C9 E5 82            [12]  400 	mov	a,dpl
-      0002CB FE               [12]  401 	mov	r6,a
-      0002CC 60 47            [24]  402 	jz	00108$
-                                    403 ;	buttonPress.c:24: buttonBucket[valb]++;
-      0002CE EE               [12]  404 	mov	a,r6
-      0002CF 24 18            [12]  405 	add	a,#_readButton_buttonBucket_65536_10
-      0002D1 F9               [12]  406 	mov	r1,a
-      0002D2 E7               [12]  407 	mov	a,@r1
-      0002D3 04               [12]  408 	inc	a
-      0002D4 F7               [12]  409 	mov	@r1,a
-                                    410 ;	buttonPress.c:25: for (char x = 0; x < 100; x++){
-      0002D5 7F 00            [12]  411 	mov	r7,#0x00
-      0002D7                        412 00110$:
-      0002D7 BF 64 00         [24]  413 	cjne	r7,#0x64,00155$
-      0002DA                        414 00155$:
-      0002DA 50 17            [24]  415 	jnc	00103$
-                                    416 ;	buttonPress.c:26: valb = readButton_helper();
-      0002DC C0 07            [24]  417 	push	ar7
-      0002DE 12 02 98         [24]  418 	lcall	_readButton_helper
-      0002E1 AE 82            [24]  419 	mov	r6,dpl
-      0002E3 D0 07            [24]  420 	pop	ar7
-                                    421 ;	buttonPress.c:27: if (valb){
-      0002E5 EE               [12]  422 	mov	a,r6
-      0002E6 60 08            [24]  423 	jz	00111$
-                                    424 ;	buttonPress.c:28: buttonBucket[valb]++;
-      0002E8 EE               [12]  425 	mov	a,r6
-      0002E9 24 18            [12]  426 	add	a,#_readButton_buttonBucket_65536_10
-      0002EB F9               [12]  427 	mov	r1,a
-      0002EC E7               [12]  428 	mov	a,@r1
-      0002ED FE               [12]  429 	mov	r6,a
-      0002EE 04               [12]  430 	inc	a
-      0002EF F7               [12]  431 	mov	@r1,a
-      0002F0                        432 00111$:
-                                    433 ;	buttonPress.c:25: for (char x = 0; x < 100; x++){
-      0002F0 0F               [12]  434 	inc	r7
-      0002F1 80 E4            [24]  435 	sjmp	00110$
-      0002F3                        436 00103$:
-                                    437 ;	buttonPress.c:31: char store = 0;
-      0002F3 7F 00            [12]  438 	mov	r7,#0x00
-                                    439 ;	buttonPress.c:32: for (char y = 1; y < 4; y++){
-      0002F5 7E 01            [12]  440 	mov	r6,#0x01
-      0002F7                        441 00113$:
-      0002F7 BE 04 00         [24]  442 	cjne	r6,#0x04,00158$
-      0002FA                        443 00158$:
-      0002FA 50 16            [24]  444 	jnc	00106$
-                                    445 ;	buttonPress.c:33: if (buttonBucket[y] > buttonBucket[store]){
-      0002FC EE               [12]  446 	mov	a,r6
-      0002FD 24 18            [12]  447 	add	a,#_readButton_buttonBucket_65536_10
-      0002FF F9               [12]  448 	mov	r1,a
-      000300 87 05            [24]  449 	mov	ar5,@r1
-      000302 EF               [12]  450 	mov	a,r7
-      000303 24 18            [12]  451 	add	a,#_readButton_buttonBucket_65536_10
-      000305 F9               [12]  452 	mov	r1,a
-      000306 87 04            [24]  453 	mov	ar4,@r1
-      000308 C3               [12]  454 	clr	c
-      000309 EC               [12]  455 	mov	a,r4
-      00030A 9D               [12]  456 	subb	a,r5
-      00030B 50 02            [24]  457 	jnc	00114$
-                                    458 ;	buttonPress.c:34: store = y;
-      00030D 8E 07            [24]  459 	mov	ar7,r6
-      00030F                        460 00114$:
-                                    461 ;	buttonPress.c:32: for (char y = 1; y < 4; y++){
-      00030F 0E               [12]  462 	inc	r6
-      000310 80 E5            [24]  463 	sjmp	00113$
-      000312                        464 00106$:
-                                    465 ;	buttonPress.c:37: return store;	
-      000312 8F 82            [24]  466 	mov	dpl,r7
-      000314 22               [24]  467 	ret
-      000315                        468 00108$:
-                                    469 ;	buttonPress.c:39: return 0;
-      000315 75 82 00         [24]  470 	mov	dpl,#0x00
-                                    471 ;	buttonPress.c:40: }
-      000318 22               [24]  472 	ret
-                                    473 	.area CSEG    (CODE)
-                                    474 	.area CONST   (CODE)
-                                    475 	.area XINIT   (CODE)
-                                    476 	.area CABS    (ABS,CODE)
+                                    383 ;x                         Allocated to registers r6 
+                                    384 ;z                         Allocated to registers r7 
+                                    385 ;store                     Allocated to registers r7 
+                                    386 ;y                         Allocated to registers 
+                                    387 ;------------------------------------------------------------
+                                    388 ;	buttonPress.c:20: unsigned char readButton(){
+                                    389 ;	-----------------------------------------
+                                    390 ;	 function readButton
+                                    391 ;	-----------------------------------------
+      0003D8                        392 _readButton:
+                                    393 ;	buttonPress.c:22: unsigned char buttonBucket[5] = {0};
+      0003D8 75 18 00         [24]  394 	mov	_readButton_buttonBucket_65536_10,#0x00
+      0003DB 75 19 00         [24]  395 	mov	(_readButton_buttonBucket_65536_10 + 0x0001),#0x00
+      0003DE 75 1A 00         [24]  396 	mov	(_readButton_buttonBucket_65536_10 + 0x0002),#0x00
+      0003E1 75 1B 00         [24]  397 	mov	(_readButton_buttonBucket_65536_10 + 0x0003),#0x00
+      0003E4 75 1C 00         [24]  398 	mov	(_readButton_buttonBucket_65536_10 + 0x0004),#0x00
+                                    399 ;	buttonPress.c:23: if(valb = readButton_helper()){
+      0003E7 12 03 B9         [24]  400 	lcall	_readButton_helper
+      0003EA E5 82            [12]  401 	mov	a,dpl
+      0003EC FE               [12]  402 	mov	r6,a
+      0003ED 60 51            [24]  403 	jz	00109$
+                                    404 ;	buttonPress.c:24: buttonBucket[valb]++;
+      0003EF EE               [12]  405 	mov	a,r6
+      0003F0 24 18            [12]  406 	add	a,#_readButton_buttonBucket_65536_10
+      0003F2 F9               [12]  407 	mov	r1,a
+      0003F3 E7               [12]  408 	mov	a,@r1
+      0003F4 04               [12]  409 	inc	a
+      0003F5 F7               [12]  410 	mov	@r1,a
+                                    411 ;	buttonPress.c:26: z = 5;
+      0003F6 7F 05            [12]  412 	mov	r7,#0x05
+      0003F8                        413 00113$:
+                                    414 ;	buttonPress.c:27: for (; z > 0; z--){
+      0003F8 EF               [12]  415 	mov	a,r7
+      0003F9 60 23            [24]  416 	jz	00104$
+                                    417 ;	buttonPress.c:28: for (x = 200; x > 0; x--){
+      0003FB 7E C8            [12]  418 	mov	r6,#0xc8
+      0003FD                        419 00110$:
+                                    420 ;	buttonPress.c:29: valb = readButton_helper();
+      0003FD C0 07            [24]  421 	push	ar7
+      0003FF C0 06            [24]  422 	push	ar6
+      000401 12 03 B9         [24]  423 	lcall	_readButton_helper
+      000404 AD 82            [24]  424 	mov	r5,dpl
+      000406 D0 06            [24]  425 	pop	ar6
+      000408 D0 07            [24]  426 	pop	ar7
+                                    427 ;	buttonPress.c:30: if (valb){
+      00040A ED               [12]  428 	mov	a,r5
+      00040B 60 08            [24]  429 	jz	00111$
+                                    430 ;	buttonPress.c:31: buttonBucket[valb]++;
+      00040D ED               [12]  431 	mov	a,r5
+      00040E 24 18            [12]  432 	add	a,#_readButton_buttonBucket_65536_10
+      000410 F9               [12]  433 	mov	r1,a
+      000411 E7               [12]  434 	mov	a,@r1
+      000412 FD               [12]  435 	mov	r5,a
+      000413 04               [12]  436 	inc	a
+      000414 F7               [12]  437 	mov	@r1,a
+      000415                        438 00111$:
+                                    439 ;	buttonPress.c:28: for (x = 200; x > 0; x--){
+      000415 EE               [12]  440 	mov	a,r6
+      000416 14               [12]  441 	dec	a
+      000417 FD               [12]  442 	mov	r5,a
+      000418 FE               [12]  443 	mov	r6,a
+      000419 70 E2            [24]  444 	jnz	00110$
+                                    445 ;	buttonPress.c:27: for (; z > 0; z--){
+      00041B 1F               [12]  446 	dec	r7
+      00041C 80 DA            [24]  447 	sjmp	00113$
+      00041E                        448 00104$:
+                                    449 ;	buttonPress.c:35: char store = 0;
+      00041E 7F 00            [12]  450 	mov	r7,#0x00
+                                    451 ;	buttonPress.c:36: for (char y = 1; y < 4; y++){
+      000420 7E 01            [12]  452 	mov	r6,#0x01
+      000422                        453 00116$:
+      000422 BE 04 00         [24]  454 	cjne	r6,#0x04,00175$
+      000425                        455 00175$:
+      000425 50 16            [24]  456 	jnc	00107$
+                                    457 ;	buttonPress.c:37: if (buttonBucket[y] > buttonBucket[store]){
+      000427 EE               [12]  458 	mov	a,r6
+      000428 24 18            [12]  459 	add	a,#_readButton_buttonBucket_65536_10
+      00042A F9               [12]  460 	mov	r1,a
+      00042B 87 05            [24]  461 	mov	ar5,@r1
+      00042D EF               [12]  462 	mov	a,r7
+      00042E 24 18            [12]  463 	add	a,#_readButton_buttonBucket_65536_10
+      000430 F9               [12]  464 	mov	r1,a
+      000431 87 04            [24]  465 	mov	ar4,@r1
+      000433 C3               [12]  466 	clr	c
+      000434 EC               [12]  467 	mov	a,r4
+      000435 9D               [12]  468 	subb	a,r5
+      000436 50 02            [24]  469 	jnc	00117$
+                                    470 ;	buttonPress.c:38: store = y;
+      000438 8E 07            [24]  471 	mov	ar7,r6
+      00043A                        472 00117$:
+                                    473 ;	buttonPress.c:36: for (char y = 1; y < 4; y++){
+      00043A 0E               [12]  474 	inc	r6
+      00043B 80 E5            [24]  475 	sjmp	00116$
+      00043D                        476 00107$:
+                                    477 ;	buttonPress.c:41: return store;	
+      00043D 8F 82            [24]  478 	mov	dpl,r7
+      00043F 22               [24]  479 	ret
+      000440                        480 00109$:
+                                    481 ;	buttonPress.c:43: return 0;
+      000440 75 82 00         [24]  482 	mov	dpl,#0x00
+                                    483 ;	buttonPress.c:44: }
+      000443 22               [24]  484 	ret
+                                    485 	.area CSEG    (CODE)
+                                    486 	.area CONST   (CODE)
+                                    487 	.area XINIT   (CODE)
+                                    488 	.area CABS    (ABS,CODE)

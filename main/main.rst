@@ -378,7 +378,7 @@
                            000001   378 	ar1 = 0x01
                            000000   379 	ar0 = 0x00
                                     380 ;	main.c:10: switchMode = readButton();
-      000086 12 02 B7         [24]  381 	lcall	_readButton
+      000086 12 03 D8         [24]  381 	lcall	_readButton
       000089 AF 82            [24]  382 	mov	r7,dpl
                                     383 ;	main.c:11: if (switchMode == 1){
       00008B BF 01 06         [24]  384 	cjne	r7,#0x01,00102$
@@ -405,14 +405,14 @@
                                     405 ;	main.c:22: while(1){
       000098                        406 00110$:
                                     407 ;	main.c:24: button = readButton();
-      000098 12 02 B7         [24]  408 	lcall	_readButton
+      000098 12 03 D8         [24]  408 	lcall	_readButton
       00009B AF 82            [24]  409 	mov	r7,dpl
                                     410 ;	main.c:25: if (button == 1){
       00009D BF 01 02         [24]  411 	cjne	r7,#0x01,00102$
                                     412 ;	main.c:26: mode++;
       0000A0 05 08            [12]  413 	inc	_mode
       0000A2                        414 00102$:
-                                    415 ;	main.c:33: switch (mode){
+                                    415 ;	main.c:28: switch (mode){
       0000A2 E5 08            [12]  416 	mov	a,_mode
       0000A4 24 FC            [12]  417 	add	a,#0xff - 0x03
       0000A6 40 2A            [24]  418 	jc	00107$
@@ -426,36 +426,36 @@
       0000B5 02 00 C3         [24]  426 	ljmp	00104$
       0000B8 02 00 C8         [24]  427 	ljmp	00105$
       0000BB 02 00 CD         [24]  428 	ljmp	00106$
-                                    429 ;	main.c:34: case 0:
+                                    429 ;	main.c:29: case 0:
       0000BE                        430 00103$:
-                                    431 ;	main.c:35: dualCylon();
-      0000BE 12 04 29         [24]  432 	lcall	_dualCylon
-                                    433 ;	main.c:39: break;
-                                    434 ;	main.c:40: case 1:
+                                    431 ;	main.c:30: dualCylon();
+      0000BE 12 05 55         [24]  432 	lcall	_dualCylon
+                                    433 ;	main.c:31: break;
+                                    434 ;	main.c:32: case 1:
       0000C1 80 D5            [24]  435 	sjmp	00110$
       0000C3                        436 00104$:
-                                    437 ;	main.c:41: cylon();
-      0000C3 12 03 D3         [24]  438 	lcall	_cylon
-                                    439 ;	main.c:44: break;
-                                    440 ;	main.c:45: case 2:
+                                    437 ;	main.c:33: cylon();
+      0000C3 12 04 FF         [24]  438 	lcall	_cylon
+                                    439 ;	main.c:34: break;
+                                    440 ;	main.c:35: case 2:
       0000C6 80 D0            [24]  441 	sjmp	00110$
       0000C8                        442 00105$:
-                                    443 ;	main.c:46: binaryCount();
-      0000C8 12 03 6C         [24]  444 	lcall	_binaryCount
-                                    445 ;	main.c:49: break;
-                                    446 ;	main.c:50: case 3:
+                                    443 ;	main.c:36: binaryCount();
+      0000C8 12 04 97         [24]  444 	lcall	_binaryCount
+                                    445 ;	main.c:37: break;
+                                    446 ;	main.c:38: case 3:
       0000CB 80 CB            [24]  447 	sjmp	00110$
       0000CD                        448 00106$:
-                                    449 ;	main.c:51: digitDisplay();
-      0000CD 12 03 C5         [24]  450 	lcall	_digitDisplay
-                                    451 ;	main.c:53: break;
-                                    452 ;	main.c:54: default:
+                                    449 ;	main.c:39: digitDisplay();
+      0000CD 12 04 F4         [24]  450 	lcall	_digitDisplay
+                                    451 ;	main.c:40: break;
+                                    452 ;	main.c:41: default:
       0000D0 80 C6            [24]  453 	sjmp	00110$
       0000D2                        454 00107$:
-                                    455 ;	main.c:55: mode = 0;
+                                    455 ;	main.c:42: mode = 0;
       0000D2 75 08 00         [24]  456 	mov	_mode,#0x00
-                                    457 ;	main.c:57: }
-                                    458 ;	main.c:59: }
+                                    457 ;	main.c:44: }
+                                    458 ;	main.c:46: }
       0000D5 80 C1            [24]  459 	sjmp	00110$
                                     460 	.area CSEG    (CODE)
                                     461 	.area CONST   (CODE)

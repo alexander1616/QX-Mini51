@@ -11,6 +11,7 @@
 	.globl _setLcd_PARM_2
 	.globl _setLcd
 	.globl _minusLcd
+	.globl _minusLcd2
 	.globl _addLcd
 	.globl _sumLcdVal
 	.globl _showLcd
@@ -720,16 +721,16 @@ _addLcd:
 00109$:
 	ret
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'minusLcd'
+;Allocation info for local variables in function 'minusLcd2'
 ;------------------------------------------------------------
 ;ix                        Allocated to registers r7 
-;i                         Allocated to registers r5 r6 
+;i                         Allocated to registers r6 r7 
 ;------------------------------------------------------------
-;	a_lcd.c:117: void minusLcd(unsigned char ix){
+;	a_lcd.c:117: void minusLcd2(unsigned char ix){
 ;	-----------------------------------------
-;	 function minusLcd
+;	 function minusLcd2
 ;	-----------------------------------------
-_minusLcd:
+_minusLcd2:
 ;	a_lcd.c:118: if (lcdVal[ix]!=0){
 	mov	a,dpl
 	mov	r7,a
@@ -737,65 +738,260 @@ _minusLcd:
 	mov	r1,a
 	mov	a,@r1
 	mov	r6,a
-	jz	00105$
+	jz	00112$
 ;	a_lcd.c:119: lcdVal[ix]--;
 	mov	a,r6
 	dec	a
 	mov	@r1,a
 	ret
-00105$:
-;	a_lcd.c:121: lcdVal[ix] = 9;
+00112$:
+;	a_lcd.c:121: if (lcdVal[ix-1]!=0){
+	mov	a,r7
+	dec	a
+	add	a,#_lcdVal
+	mov	r0,a
+	mov	a,@r0
+	jz	00109$
+;	a_lcd.c:122: lcdVal[ix] = 9;
 	mov	@r1,#0x09
-;	a_lcd.c:122: if (ix == 3){
-	cjne	r7,#0x03,00103$
-;	a_lcd.c:123: for (int i = 0; i < 4; i++){
-	mov	r5,#0x00
-	mov	r6,#0x00
-00108$:
-	clr	c
-	mov	a,r5
-	subb	a,#0x04
-	mov	a,r6
-	xrl	a,#0x80
-	subb	a,#0x80
-	jnc	00101$
-;	a_lcd.c:124: lcdVal[i] = 9;
-	mov	a,r5
+;	a_lcd.c:123: minusLcd2(ix-1);
+	mov	a,r7
+	dec	a
+	mov	dpl,a
+	ljmp	_minusLcd2
+00109$:
+;	a_lcd.c:125: if (lcdVal[ix-2]!=0){
+	mov	a,r7
+	add	a,#0xfe
+	add	a,#_lcdVal
+	mov	r0,a
+	mov	a,@r0
+	jz	00106$
+;	a_lcd.c:126: lcdVal[ix] = 9;
+	mov	@r1,#0x09
+;	a_lcd.c:127: lcdVal[ix-1] = 9;
+	mov	a,r7
+	dec	a
 	add	a,#_lcdVal
 	mov	r0,a
 	mov	@r0,#0x09
-;	a_lcd.c:123: for (int i = 0; i < 4; i++){
-	inc	r5
-	cjne	r5,#0x00,00108$
-	inc	r6
-	sjmp	00108$
-00101$:
-;	a_lcd.c:126: return;
-	ret
-00103$:
-;	a_lcd.c:128: minusLcd(ix+1);
+;	a_lcd.c:128: minusLcd2(ix-2);
 	mov	a,r7
-	inc	a
+	add	a,#0xfe
 	mov	dpl,a
-;	a_lcd.c:130: }
-	ljmp	_minusLcd
+	ljmp	_minusLcd2
+00106$:
+;	a_lcd.c:130: if (lcdVal[ix-3]!=0){
+	mov	a,r7
+	add	a,#0xfd
+	add	a,#_lcdVal
+	mov	r0,a
+	mov	a,@r0
+	jz	00124$
+;	a_lcd.c:131: lcdVal[ix] = 9;
+	mov	@r1,#0x09
+;	a_lcd.c:132: lcdVal[ix-1] = 9;
+	mov	a,r7
+	dec	a
+	add	a,#_lcdVal
+	mov	r0,a
+	mov	@r0,#0x09
+;	a_lcd.c:133: lcdVal[ix-2] = 9;
+	mov	a,r7
+	add	a,#0xfe
+	add	a,#_lcdVal
+	mov	r0,a
+	mov	@r0,#0x09
+;	a_lcd.c:134: minusLcd2(ix-3);
+	mov	a,r7
+	add	a,#0xfd
+	mov	dpl,a
+;	a_lcd.c:136: for (int i = 0; i < 4; i++){
+	ljmp	_minusLcd2
+00124$:
+	mov	r6,#0x00
+	mov	r7,#0x00
+00115$:
+	clr	c
+	mov	a,r6
+	subb	a,#0x04
+	mov	a,r7
+	xrl	a,#0x80
+	subb	a,#0x80
+	jnc	00101$
+;	a_lcd.c:137: lcdVal[i] = 9;
+	mov	a,r6
+	add	a,#_lcdVal
+	mov	r0,a
+	mov	@r0,#0x09
+;	a_lcd.c:136: for (int i = 0; i < 4; i++){
+	inc	r6
+	cjne	r6,#0x00,00115$
+	inc	r7
+	sjmp	00115$
+00101$:
+;	a_lcd.c:139: return;
+;	a_lcd.c:144: }
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'minusLcd'
+;------------------------------------------------------------
+;tVal                      Allocated to registers r6 r7 
+;------------------------------------------------------------
+;	a_lcd.c:146: void minusLcd(){
+;	-----------------------------------------
+;	 function minusLcd
+;	-----------------------------------------
+_minusLcd:
+;	a_lcd.c:147: int tVal = sumLcdVal();
+	lcall	_sumLcdVal
+	mov	r6,dpl
+	mov	r7,dph
+;	a_lcd.c:148: if (tVal == 0){
+	mov	a,r6
+	orl	a,r7
+	jnz	00102$
+;	a_lcd.c:149: tVal = 9999;
+	mov	r6,#0x0f
+	mov	r7,#0x27
+	sjmp	00103$
+00102$:
+;	a_lcd.c:151: tVal--;
+	dec	r6
+	cjne	r6,#0xff,00135$
+	dec	r7
+00135$:
+00103$:
+;	a_lcd.c:153: if (tVal > 0){
+	clr	c
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00105$
+;	a_lcd.c:154: lcdVal[3] = tVal % 10;
+	mov	__modsint_PARM_2,#0x0a
+	mov	(__modsint_PARM_2 + 1),#0x00
+	mov	dpl,r6
+	mov	dph,r7
+	push	ar7
+	push	ar6
+	lcall	__modsint
+	mov	r4,dpl
+	pop	ar6
+	pop	ar7
+	mov	(_lcdVal + 0x0003),r4
+;	a_lcd.c:155: tVal /= 10;
+	mov	__divsint_PARM_2,#0x0a
+	mov	(__divsint_PARM_2 + 1),#0x00
+	mov	dpl,r6
+	mov	dph,r7
+	lcall	__divsint
+	mov	r6,dpl
+	mov	r7,dph
+00105$:
+;	a_lcd.c:157: if (tVal > 0){
+	clr	c
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00107$
+;	a_lcd.c:158: lcdVal[2] = tVal%10;
+	mov	__modsint_PARM_2,#0x0a
+	mov	(__modsint_PARM_2 + 1),#0x00
+	mov	dpl,r6
+	mov	dph,r7
+	push	ar7
+	push	ar6
+	lcall	__modsint
+	mov	r4,dpl
+	pop	ar6
+	pop	ar7
+	mov	(_lcdVal + 0x0002),r4
+;	a_lcd.c:159: tVal /= 10;
+	mov	__divsint_PARM_2,#0x0a
+	mov	(__divsint_PARM_2 + 1),#0x00
+	mov	dpl,r6
+	mov	dph,r7
+	lcall	__divsint
+	mov	r6,dpl
+	mov	r7,dph
+00107$:
+;	a_lcd.c:161: if (tVal > 0){
+	clr	c
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00109$
+;	a_lcd.c:162: lcdVal[1] = tVal%10;
+	mov	__modsint_PARM_2,#0x0a
+	mov	(__modsint_PARM_2 + 1),#0x00
+	mov	dpl,r6
+	mov	dph,r7
+	push	ar7
+	push	ar6
+	lcall	__modsint
+	mov	r4,dpl
+	pop	ar6
+	pop	ar7
+	mov	(_lcdVal + 0x0001),r4
+;	a_lcd.c:163: tVal /= 10;
+	mov	__divsint_PARM_2,#0x0a
+	mov	(__divsint_PARM_2 + 1),#0x00
+	mov	dpl,r6
+	mov	dph,r7
+	lcall	__divsint
+	mov	r6,dpl
+	mov	r7,dph
+00109$:
+;	a_lcd.c:165: if (tVal > 0){
+	clr	c
+	clr	a
+	subb	a,r6
+	mov	a,#(0x00 ^ 0x80)
+	mov	b,r7
+	xrl	b,#0x80
+	subb	a,b
+	jnc	00111$
+;	a_lcd.c:166: lcdVal[0] = tVal%10;
+	mov	__modsint_PARM_2,#0x0a
+	mov	(__modsint_PARM_2 + 1),#0x00
+	mov	dpl,r6
+	mov	dph,r7
+	lcall	__modsint
+	mov	r6,dpl
+	mov	r7,dph
+	mov	_lcdVal,r6
+;	a_lcd.c:167: tVal /=10;
+00111$:
+;	a_lcd.c:169: return;
+;	a_lcd.c:170: }
+	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'setLcd'
 ;------------------------------------------------------------
 ;val                       Allocated with name '_setLcd_PARM_2'
 ;pos                       Allocated to registers r7 
 ;------------------------------------------------------------
-;	a_lcd.c:132: void setLcd(unsigned char pos, unsigned char val){
+;	a_lcd.c:172: void setLcd(unsigned char pos, unsigned char val){
 ;	-----------------------------------------
 ;	 function setLcd
 ;	-----------------------------------------
 _setLcd:
-;	a_lcd.c:133: lcdVal[pos] = val;
+;	a_lcd.c:173: lcdVal[pos] = val;
 	mov	a,dpl
 	add	a,#_lcdVal
 	mov	r0,a
 	mov	@r0,_setLcd_PARM_2
-;	a_lcd.c:134: }
+;	a_lcd.c:174: }
 	ret
 	.area CSEG    (CODE)
 	.area CONST   (CODE)

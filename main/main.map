@@ -80,9 +80,9 @@ C:   00000083  s_GSFINAL
 C:   00000086  s_CSEG                          
 C:   000000E1  l_SSEG                          
 C:   00000100  l_IRAM                          
-C:   00000402  l_CSEG                          
-C:   00000488  s_CONST                         
-C:   00000488  s_XINIT                         
+C:   00000612  l_CSEG                          
+C:   00000698  s_CONST                         
+C:   00000698  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -265,9 +265,12 @@ OSEG                                0000001D    00000002 =           2. bytes (R
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
+     0000001D  __divsint_PARM_2                   _divuint
+     0000001D  __divuint_PARM_2                   _divuint
+     0000001D  __modsint_PARM_2                   _moduint
+     0000001D  __moduint_PARM_2                   _moduint
      0000001D  __mulint_PARM_2                    _mulint
      0000001D  _setLcd_PARM_2                     a_lcd
-
 ASxxxx Linker V03.00 + NoICE + sdld,  page 9.
 Hexadecimal  [32-Bits]
 
@@ -356,7 +359,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                00000086    00000402 =        1026. bytes (REL,CON,CODE)
+CSEG                                00000086    00000612 =        1554. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -368,18 +371,23 @@ C:   0000012D  _showLcd3                          a_lcd
 C:   00000179  _showLcd                           a_lcd
 C:   000001C1  _sumLcdVal                         a_lcd
 C:   00000221  _addLcd                            a_lcd
-C:   00000259  _minusLcd                          a_lcd
-C:   00000290  _setLcd                            a_lcd
-C:   00000298  _readButton_helper                 buttonPress
-C:   000002B7  _readButton                        buttonPress
-C:   0000036C  _binaryCount                       binaryCount
-C:   00000390  _digitDisplay_helper               binaryCount
-C:   000003C5  _digitDisplay                      binaryCount
-C:   000003D3  _cylon                             binaryCount
-C:   00000429  _dualCylon                         binaryCount
-C:   00000467  __mulint                           _mulint
-C:   00000467  __mulint_dummy                     _mulint
-C:   00000484  __sdcc_external_startup            _startup
+C:   00000259  _minusLcd2                         a_lcd
+C:   000002D1  _minusLcd                          a_lcd
+C:   000003B1  _setLcd                            a_lcd
+C:   000003B9  _readButton_helper                 buttonPress
+C:   000003D8  _readButton                        buttonPress
+C:   00000497  _binaryCount                       binaryCount
+C:   000004BB  _digitDisplay_helper               binaryCount
+C:   000004F4  _digitDisplay                      binaryCount
+C:   000004FF  _cylon                             binaryCount
+C:   00000555  _dualCylon                         binaryCount
+C:   00000593  __mulint                           _mulint
+C:   00000593  __mulint_dummy                     _mulint
+C:   000005B0  __moduint                          _moduint
+C:   000005FD  __divuint                          _divuint
+C:   00000626  __modsint                          _modsint
+C:   0000065C  __divsint                          _divsint
+C:   00000694  __sdcc_external_startup            _startup
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 18.
 
@@ -399,12 +407,20 @@ Libraries Linked                          [ object file ]
                                           [ crtxinit.rel ]
 /usr/bin/../share/sdcc/lib/small/libint.lib
                                           [ _mulint.rel ]
+/usr/bin/../share/sdcc/lib/small/libint.lib
+                                          [ _moduint.rel ]
+/usr/bin/../share/sdcc/lib/small/libint.lib
+                                          [ _divuint.rel ]
 /usr/bin/../share/sdcc/lib/small/mcs51.lib
                                           [ crtxclear.rel ]
 /usr/bin/../share/sdcc/lib/small/mcs51.lib
                                           [ crtpagesfr.rel ]
 /usr/bin/../share/sdcc/lib/small/mcs51.lib
                                           [ crtstart.rel ]
+/usr/bin/../share/sdcc/lib/small/libint.lib
+                                          [ _modsint.rel ]
+/usr/bin/../share/sdcc/lib/small/libint.lib
+                                          [ _divsint.rel ]
 /usr/bin/../share/sdcc/lib/small/libsdcc.lib
                                           [ _startup.rel ]
 

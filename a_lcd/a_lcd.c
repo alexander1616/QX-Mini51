@@ -114,19 +114,59 @@ void addLcd(unsigned char ix){
     }
 }
 
-void minusLcd(unsigned char ix){
+void minusLcd2(unsigned char ix){
     if (lcdVal[ix]!=0){
         lcdVal[ix]--;
     } else {
-        lcdVal[ix] = 9;
-        if (ix == 3){
-            for (int i = 0; i < 4; i++){
-                lcdVal[i] = 9;
+        if (lcdVal[ix-1]!=0){
+            lcdVal[ix] = 9;
+            minusLcd2(ix-1);
+        } else {
+            if (lcdVal[ix-2]!=0){
+                lcdVal[ix] = 9;
+                lcdVal[ix-1] = 9;
+                minusLcd2(ix-2);
+            } else {
+                if (lcdVal[ix-3]!=0){
+                    lcdVal[ix] = 9;
+                    lcdVal[ix-1] = 9;
+                    lcdVal[ix-2] = 9;
+                    minusLcd2(ix-3);
+                } else {
+                    for (int i = 0; i < 4; i++){
+                        lcdVal[i] = 9;
+                    }
+                    return;
+                }
             }
-            return;
         }
-        minusLcd(ix+1);
     }
+}
+
+void minusLcd(){
+    int tVal = sumLcdVal();
+    if (tVal == 0){
+        tVal = 9999;
+    } else {
+        tVal--;
+    }
+    if (tVal > 0){
+        lcdVal[3] = tVal % 10;
+        tVal /= 10;
+    }
+    if (tVal > 0){
+        lcdVal[2] = tVal%10;
+        tVal /= 10;
+    } 
+    if (tVal > 0){
+        lcdVal[1] = tVal%10;
+        tVal /= 10;
+    } 
+    if (tVal > 0){
+        lcdVal[0] = tVal%10;
+        tVal /=10;
+    }
+    return;
 }
 
 void setLcd(unsigned char pos, unsigned char val){

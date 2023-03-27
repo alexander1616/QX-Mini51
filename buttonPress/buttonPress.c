@@ -22,12 +22,16 @@ unsigned char readButton(){
 	unsigned char buttonBucket[5] = {0};
 	if(valb = readButton_helper()){
 		buttonBucket[valb]++;
-		for (char x = 0; x < 100; x++){
-			valb = readButton_helper();
-			if (valb){
-				buttonBucket[valb]++;
-			}
-		}
+        unsigned char x, z;
+        z = 5;
+        for (; z > 0; z--){
+            for (x = 200; x > 0; x--){
+			    valb = readButton_helper();
+			    if (valb){
+				    buttonBucket[valb]++;
+			    }
+		    }
+        }
 		char store = 0;
 		for (char y = 1; y < 4; y++){
 			if (buttonBucket[y] > buttonBucket[store]){
@@ -38,6 +42,7 @@ unsigned char readButton(){
 	}
 	return 0;
 }
+
 /*
 void main (){
 	while (1) {

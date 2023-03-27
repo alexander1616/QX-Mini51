@@ -412,7 +412,7 @@ _main:
 ;	main.c:26: mode++;
 	inc	_mode
 00102$:
-;	main.c:33: switch (mode){
+;	main.c:28: switch (mode){
 	mov	a,_mode
 	add	a,#0xff - 0x03
 	jc	00107$
@@ -426,36 +426,36 @@ _main:
 	ljmp	00104$
 	ljmp	00105$
 	ljmp	00106$
-;	main.c:34: case 0:
+;	main.c:29: case 0:
 00103$:
-;	main.c:35: dualCylon();
+;	main.c:30: dualCylon();
 	lcall	_dualCylon
-;	main.c:39: break;
-;	main.c:40: case 1:
+;	main.c:31: break;
+;	main.c:32: case 1:
 	sjmp	00110$
 00104$:
-;	main.c:41: cylon();
+;	main.c:33: cylon();
 	lcall	_cylon
-;	main.c:44: break;
-;	main.c:45: case 2:
+;	main.c:34: break;
+;	main.c:35: case 2:
 	sjmp	00110$
 00105$:
-;	main.c:46: binaryCount();
+;	main.c:36: binaryCount();
 	lcall	_binaryCount
-;	main.c:49: break;
-;	main.c:50: case 3:
+;	main.c:37: break;
+;	main.c:38: case 3:
 	sjmp	00110$
 00106$:
-;	main.c:51: digitDisplay();
+;	main.c:39: digitDisplay();
 	lcall	_digitDisplay
-;	main.c:53: break;
-;	main.c:54: default:
+;	main.c:40: break;
+;	main.c:41: default:
 	sjmp	00110$
 00107$:
-;	main.c:55: mode = 0;
+;	main.c:42: mode = 0;
 	mov	_mode,#0x00
-;	main.c:57: }
-;	main.c:59: }
+;	main.c:44: }
+;	main.c:46: }
 	sjmp	00110$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)

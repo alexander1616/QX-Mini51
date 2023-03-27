@@ -8,10 +8,8 @@
 ;--------------------------------------------------------
 ; Public variables in this module
 ;--------------------------------------------------------
-	.globl _main
 	.globl _readButton
 	.globl _readButton_helper
-	.globl _showLcd
 	.globl _TF2
 	.globl _EXF2
 	.globl _RCLK
@@ -276,13 +274,6 @@ _readButton_buttonBucket_65536_10:
 ;--------------------------------------------------------
 	.area	OSEG    (OVR,DATA)
 ;--------------------------------------------------------
-; Stack segment in internal ram 
-;--------------------------------------------------------
-	.area	SSEG
-__start__stack:
-	.ds	1
-
-;--------------------------------------------------------
 ; indirectly addressable internal ram data
 ;--------------------------------------------------------
 	.area ISEG    (DATA)
@@ -322,34 +313,17 @@ __start__stack:
 	.area GSFINAL (CODE)
 	.area CSEG    (CODE)
 ;--------------------------------------------------------
-; interrupt vector 
-;--------------------------------------------------------
-	.area HOME    (CODE)
-__interrupt_vect:
-	ljmp	__sdcc_gsinit_startup
-;--------------------------------------------------------
 ; global & static initialisations
 ;--------------------------------------------------------
 	.area HOME    (CODE)
 	.area GSINIT  (CODE)
 	.area GSFINAL (CODE)
 	.area GSINIT  (CODE)
-	.globl __sdcc_gsinit_startup
-	.globl __sdcc_program_startup
-	.globl __start__stack
-	.globl __mcs51_genXINIT
-	.globl __mcs51_genXRAMCLEAR
-	.globl __mcs51_genRAMCLEAR
-	.area GSFINAL (CODE)
-	ljmp	__sdcc_program_startup
 ;--------------------------------------------------------
 ; Home
 ;--------------------------------------------------------
 	.area HOME    (CODE)
 	.area HOME    (CODE)
-__sdcc_program_startup:
-	ljmp	_main
-;	return from main will return to caller
 ;--------------------------------------------------------
 ; code
 ;--------------------------------------------------------
@@ -508,67 +482,6 @@ _readButton:
 	mov	dpl,#0x00
 ;	buttonPress.c:44: }
 	ret
-;------------------------------------------------------------
-;Allocation info for local variables in function 'main'
-;------------------------------------------------------------
-;button                    Allocated to registers r7 
-;------------------------------------------------------------
-;	buttonPress.c:45: void main (){
-;	-----------------------------------------
-;	 function main
-;	-----------------------------------------
-_main:
-;	buttonPress.c:46: while (1) {
-00108$:
-;	buttonPress.c:48: button = readButton();
-	lcall	_readButton
-	mov	r7,dpl
-;	buttonPress.c:49: switch (button){
-	cjne	r7,#0x01,00132$
-	sjmp	00101$
-00132$:
-	cjne	r7,#0x02,00133$
-	sjmp	00102$
-00133$:
-	cjne	r7,#0x03,00134$
-	sjmp	00103$
-00134$:
-;	buttonPress.c:50: case 1:
-	cjne	r7,#0x04,00108$
-	sjmp	00104$
-00101$:
-;	buttonPress.c:51: showLcd(0, 1);
-	mov	_showLcd_PARM_2,#0x01
-	mov	dpl,#0x00
-	lcall	_showLcd
-;	buttonPress.c:52: break;
-;	buttonPress.c:53: case 2:
-	sjmp	00108$
-00102$:
-;	buttonPress.c:54: showLcd(1, 2);
-	mov	_showLcd_PARM_2,#0x02
-	mov	dpl,#0x01
-	lcall	_showLcd
-;	buttonPress.c:55: break;
-;	buttonPress.c:56: case 3:
-	sjmp	00108$
-00103$:
-;	buttonPress.c:57: showLcd(2, 3);
-	mov	_showLcd_PARM_2,#0x03
-	mov	dpl,#0x02
-	lcall	_showLcd
-;	buttonPress.c:58: break;
-;	buttonPress.c:59: case 4:
-	sjmp	00108$
-00104$:
-;	buttonPress.c:60: showLcd(3, 4);
-	mov	_showLcd_PARM_2,#0x04
-	mov	dpl,#0x03
-	lcall	_showLcd
-;	buttonPress.c:61: break;
-;	buttonPress.c:64: }
-;	buttonPress.c:66: }
-	sjmp	00108$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
 	.area XINIT   (CODE)

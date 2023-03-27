@@ -63,22 +63,20 @@ unsigned char digitDisplay_helper(){
     unsigned char button;
     button = readButton();
     switch (button){
-    case 1:
-        mode++;
-        return 1;
-    case 2:
-        minusLcd2(3);
-        break;
-    case 3:
-        addLcd(3);
-        break;
-    case 4:
-        mode++;
-        return 1;
-        //minusLcd2(3);
-        //break;
-    default:
-        break;
+        case 1:
+            mode++;
+            return 1;
+        case 2:
+            minusLcd2(3);
+            break;
+        case 3:
+            addLcd(3);
+            break;
+        case 4:
+            minusLcd2(3);
+            break;
+        default:
+            break;
     }
     return 0;
 }

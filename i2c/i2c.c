@@ -11,6 +11,11 @@ void i2c_delay(unsigned cnt){
   while(cnt--);
 }
 
+void delayMs(unsigned int i){
+    for (; i> 0; i--)
+        for (unsigned char j = 155; j > 0; j--);
+}
+
 void i2c_start(void){
   I2C_SDA = 1;
   I2C_SCL = 1;
@@ -83,7 +88,7 @@ void i2c_write_byte(unsigned char addr, unsigned char val){
  
 unsigned char i2c_read_byte(unsigned char addr){
     P0_1 = 1;
-    unsigned char value;
+    unsigned char value = 0;
     addr <<=1;
     addr |= 1;
     i2c_start();
@@ -93,4 +98,26 @@ unsigned char i2c_read_byte(unsigned char addr){
     i2c_stop();
     P0_1 = 0;
     return value;
+}
+
+void main(void){
+    unsigned char readVal = 0;
+    unsigned char data = 0;
+    readVal = i2c_read_byte(LED_I2C_ADDR);
+    //P1 = readVal;
+    if(readVal & 0x80){
+        data |= 0x01;
+    } 
+    if (readVal & 0x40){
+        data |= 0x02;
+    } 
+    if (readVal & 0x20){
+        data |= 0x04;
+    } 
+    if (readVal & 0x10){
+        data |= 0x08;
+    } 
+    i2c_write_byte(LED_I2C_ADDR, data);
+    //P1 = 0;
+    //delayMs(500);
 }

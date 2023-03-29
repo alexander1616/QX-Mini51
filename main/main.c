@@ -2,8 +2,10 @@
 #include "../a_lcd/a_lcd.h"
 #include "../buttonPress/buttonPress.h"
 #include "../binaryCount/binaryCount.h"
+#include "../i2c/i2c.h"
 
 unsigned char mode = 0;
+extern void delayMs(unsigned int);
 
 unsigned char getMode(){
     unsigned char switchMode;
@@ -19,6 +21,9 @@ unsigned char getMode(){
 }
 
 void main(){
+    lcd_Init();
+    delayMs(1000);
+    printMessage();
     while(1){
        unsigned char button;
         button = readButton();

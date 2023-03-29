@@ -8,7 +8,11 @@
 ;--------------------------------------------------------
 ; Public variables in this module
 ;--------------------------------------------------------
-	.globl _main
+	.globl _printMessage
+	.globl _lcd_Init
+	.globl _lcd_writeString
+	.globl _lcd_writeChar
+	.globl _lcd_send_bits
 	.globl _i2c_read_byte
 	.globl _i2c_write_byte
 	.globl _i2c_read
@@ -17,6 +21,7 @@
 	.globl _i2c_start
 	.globl _delayMs
 	.globl _i2c_delay
+	.globl _getMode
 	.globl _CY
 	.globl _AC
 	.globl _F0
@@ -113,6 +118,7 @@
 	.globl _DPL
 	.globl _SP
 	.globl _P0
+	.globl _lcd_writeChar_PARM_2
 	.globl _i2c_write_byte_PARM_2
 ;--------------------------------------------------------
 ; special function registers
@@ -231,18 +237,13 @@ _CY	=	0x00d7
 	.area DSEG    (DATA)
 _i2c_write_byte_PARM_2:
 	.ds 1
+_lcd_writeChar_PARM_2:
+	.ds 1
 ;--------------------------------------------------------
 ; overlayable items in internal ram 
 ;--------------------------------------------------------
 	.area	OSEG    (OVR,DATA)
 	.area	OSEG    (OVR,DATA)
-;--------------------------------------------------------
-; Stack segment in internal ram 
-;--------------------------------------------------------
-	.area	SSEG
-__start__stack:
-	.ds	1
-
 ;--------------------------------------------------------
 ; indirectly addressable internal ram data
 ;--------------------------------------------------------
@@ -283,34 +284,17 @@ __start__stack:
 	.area GSFINAL (CODE)
 	.area CSEG    (CODE)
 ;--------------------------------------------------------
-; interrupt vector 
-;--------------------------------------------------------
-	.area HOME    (CODE)
-__interrupt_vect:
-	ljmp	__sdcc_gsinit_startup
-;--------------------------------------------------------
 ; global & static initialisations
 ;--------------------------------------------------------
 	.area HOME    (CODE)
 	.area GSINIT  (CODE)
 	.area GSFINAL (CODE)
 	.area GSINIT  (CODE)
-	.globl __sdcc_gsinit_startup
-	.globl __sdcc_program_startup
-	.globl __start__stack
-	.globl __mcs51_genXINIT
-	.globl __mcs51_genXRAMCLEAR
-	.globl __mcs51_genRAMCLEAR
-	.area GSFINAL (CODE)
-	ljmp	__sdcc_program_startup
 ;--------------------------------------------------------
 ; Home
 ;--------------------------------------------------------
 	.area HOME    (CODE)
 	.area HOME    (CODE)
-__sdcc_program_startup:
-	ljmp	_main
-;	return from main will return to caller
 ;--------------------------------------------------------
 ; code
 ;--------------------------------------------------------
@@ -320,7 +304,7 @@ __sdcc_program_startup:
 ;------------------------------------------------------------
 ;cnt                       Allocated to registers 
 ;------------------------------------------------------------
-;	i2c.c:10: void i2c_delay(unsigned cnt){
+;	i2c.c:13: void i2c_delay(unsigned cnt){
 ;	-----------------------------------------
 ;	 function i2c_delay
 ;	-----------------------------------------
@@ -335,7 +319,7 @@ _i2c_delay:
 	ar0 = 0x00
 	mov	r6,dpl
 	mov	r7,dph
-;	i2c.c:11: while(cnt--);
+;	i2c.c:14: while(cnt--);
 00101$:
 	mov	ar4,r6
 	mov	ar5,r7
@@ -346,7 +330,7 @@ _i2c_delay:
 	mov	a,r4
 	orl	a,r5
 	jnz	00101$
-;	i2c.c:12: }
+;	i2c.c:15: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'delayMs'
@@ -354,7 +338,7 @@ _i2c_delay:
 ;i                         Allocated to registers 
 ;j                         Allocated to registers r5 
 ;------------------------------------------------------------
-;	i2c.c:14: void delayMs(unsigned int i){
+;	i2c.c:17: void delayMs(unsigned int i){
 ;	-----------------------------------------
 ;	 function delayMs
 ;	-----------------------------------------
@@ -362,11 +346,11 @@ _delayMs:
 	mov	r6,dpl
 	mov	r7,dph
 00107$:
-;	i2c.c:15: for (; i> 0; i--)
+;	i2c.c:18: for (; i> 0; i--)
 	mov	a,r6
 	orl	a,r7
 	jz	00109$
-;	i2c.c:16: for (unsigned char j = 155; j > 0; j--);
+;	i2c.c:19: for (unsigned char j = 155; j > 0; j--);
 	mov	r5,#0x9b
 00104$:
 	mov	a,r5
@@ -374,70 +358,70 @@ _delayMs:
 	dec	r5
 	sjmp	00104$
 00108$:
-;	i2c.c:15: for (; i> 0; i--)
+;	i2c.c:18: for (; i> 0; i--)
 	dec	r6
 	cjne	r6,#0xff,00135$
 	dec	r7
 00135$:
 	sjmp	00107$
 00109$:
-;	i2c.c:17: }
+;	i2c.c:20: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'i2c_start'
 ;------------------------------------------------------------
-;	i2c.c:19: void i2c_start(void){
+;	i2c.c:22: void i2c_start(void){
 ;	-----------------------------------------
 ;	 function i2c_start
 ;	-----------------------------------------
 _i2c_start:
-;	i2c.c:20: I2C_SDA = 1;
+;	i2c.c:23: I2C_SDA = 1;
 ;	assignBit
 	setb	_P0_6
-;	i2c.c:21: I2C_SCL = 1;
+;	i2c.c:24: I2C_SCL = 1;
 ;	assignBit
 	setb	_P0_7
-;	i2c.c:22: i2c_delay(10);
+;	i2c.c:25: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
-;	i2c.c:23: I2C_SDA = 0;
+;	i2c.c:26: I2C_SDA = 0;
 ;	assignBit
 	clr	_P0_6
-;	i2c.c:24: i2c_delay(10);
+;	i2c.c:27: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
-;	i2c.c:25: I2C_SCL = 0;
+;	i2c.c:28: I2C_SCL = 0;
 ;	assignBit
 	clr	_P0_7
-;	i2c.c:26: }
+;	i2c.c:29: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'i2c_stop'
 ;------------------------------------------------------------
-;	i2c.c:28: void i2c_stop(void){
+;	i2c.c:31: void i2c_stop(void){
 ;	-----------------------------------------
 ;	 function i2c_stop
 ;	-----------------------------------------
 _i2c_stop:
-;	i2c.c:29: i2c_delay(10);
+;	i2c.c:32: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
-;	i2c.c:30: I2C_SDA = 0;
+;	i2c.c:33: I2C_SDA = 0;
 ;	assignBit
 	clr	_P0_6
-;	i2c.c:31: i2c_delay(10);
+;	i2c.c:34: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
-;	i2c.c:32: I2C_SCL = 1;
+;	i2c.c:35: I2C_SCL = 1;
 ;	assignBit
 	setb	_P0_7
-;	i2c.c:33: i2c_delay(10);
+;	i2c.c:36: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
-;	i2c.c:34: I2C_SDA = 1;
+;	i2c.c:37: I2C_SDA = 1;
 ;	assignBit
 	setb	_P0_6
-;	i2c.c:35: }
+;	i2c.c:38: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'i2c_write'
@@ -446,87 +430,87 @@ _i2c_stop:
 ;i                         Allocated to registers r6 
 ;ack                       Allocated to registers r7 
 ;------------------------------------------------------------
-;	i2c.c:37: unsigned char i2c_write(unsigned char val){
+;	i2c.c:40: unsigned char i2c_write(unsigned char val){
 ;	-----------------------------------------
 ;	 function i2c_write
 ;	-----------------------------------------
 _i2c_write:
 	mov	r7,dpl
-;	i2c.c:38: unsigned char i=9, ack=0;
+;	i2c.c:41: unsigned char i=9, ack=0;
 	mov	r6,#0x09
-;	i2c.c:40: while(--i){
+;	i2c.c:43: while(--i){
 00101$:
 	mov	a,r6
 	dec	a
 	mov	r6,a
 	jz	00103$
-;	i2c.c:41: i2c_delay(10);
+;	i2c.c:44: i2c_delay(10);
 	mov	dptr,#0x000a
 	push	ar7
 	push	ar6
 	lcall	_i2c_delay
 	pop	ar6
 	pop	ar7
-;	i2c.c:42: I2C_SDA = (val & 0x80) ? 1 : 0;
+;	i2c.c:45: I2C_SDA = (val & 0x80) ? 1 : 0;
 	mov	a,r7
 	rl	a
 	anl	a,#0x01
 	add	a,#0xff
 	mov	_P0_6,c
-;	i2c.c:43: i2c_delay(10);
+;	i2c.c:46: i2c_delay(10);
 	mov	dptr,#0x000a
 	push	ar7
 	push	ar6
 	lcall	_i2c_delay
-;	i2c.c:44: I2C_SCL = 1;
+;	i2c.c:47: I2C_SCL = 1;
 ;	assignBit
 	setb	_P0_7
-;	i2c.c:45: i2c_delay(10);
+;	i2c.c:48: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
 	pop	ar6
 	pop	ar7
-;	i2c.c:46: val<<= 1;
+;	i2c.c:49: val<<= 1;
 	mov	ar5,r7
 	mov	a,r5
 	add	a,r5
 	mov	r7,a
-;	i2c.c:47: I2C_SCL = 0;
+;	i2c.c:50: I2C_SCL = 0;
 ;	assignBit
 	clr	_P0_7
 	sjmp	00101$
 00103$:
-;	i2c.c:49: i2c_delay(10);
+;	i2c.c:52: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
-;	i2c.c:50: I2C_SDA = 1;
+;	i2c.c:53: I2C_SDA = 1;
 ;	assignBit
 	setb	_P0_6
-;	i2c.c:51: i2c_delay(10);
+;	i2c.c:54: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
-;	i2c.c:52: I2C_SCL = 1;
+;	i2c.c:55: I2C_SCL = 1;
 ;	assignBit
 	setb	_P0_7
-;	i2c.c:53: i2c_delay(10);
+;	i2c.c:56: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
-;	i2c.c:54: ack = I2C_SDA;
+;	i2c.c:57: ack = I2C_SDA;
 	mov	c,_P0_6
 	clr	a
 	rlc	a
 	mov	r7,a
-;	i2c.c:55: i2c_delay(10);
+;	i2c.c:58: i2c_delay(10);
 	mov	dptr,#0x000a
 	push	ar7
 	lcall	_i2c_delay
 	pop	ar7
-;	i2c.c:56: I2C_SCL = 0;
+;	i2c.c:59: I2C_SCL = 0;
 ;	assignBit
 	clr	_P0_7
-;	i2c.c:57: return ack;
+;	i2c.c:60: return ack;
 	mov	dpl,r7
-;	i2c.c:58: }
+;	i2c.c:61: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'i2c_read'
@@ -534,57 +518,57 @@ _i2c_write:
 ;i                         Allocated to registers r7 
 ;val                       Allocated to registers r5 
 ;------------------------------------------------------------
-;	i2c.c:60: unsigned char i2c_read(void){
+;	i2c.c:63: unsigned char i2c_read(void){
 ;	-----------------------------------------
 ;	 function i2c_read
 ;	-----------------------------------------
 _i2c_read:
-;	i2c.c:61: unsigned char i=9, val=0;
+;	i2c.c:64: unsigned char i=9, val=0;
 	mov	r7,#0x09
 	mov	r6,#0x00
-;	i2c.c:63: while(--i){
+;	i2c.c:66: while(--i){
 00101$:
 	mov	a,r7
 	dec	a
 	mov	r7,a
 	jz	00103$
-;	i2c.c:64: val<<= 1;
+;	i2c.c:67: val<<= 1;
 	mov	ar5,r6
 	mov	a,r5
 	add	a,r5
 	mov	r5,a
-;	i2c.c:65: i2c_delay(10);
+;	i2c.c:68: i2c_delay(10);
 	mov	dptr,#0x000a
 	push	ar7
 	push	ar5
 	lcall	_i2c_delay
-;	i2c.c:66: I2C_SCL = 1;
+;	i2c.c:69: I2C_SCL = 1;
 ;	assignBit
 	setb	_P0_7
-;	i2c.c:67: i2c_delay(10);
+;	i2c.c:70: i2c_delay(10);
 	mov	dptr,#0x000a
 	lcall	_i2c_delay
 	pop	ar5
-;	i2c.c:68: val|= I2C_SDA;
+;	i2c.c:71: val|= I2C_SDA;
 	mov	c,_P0_6
 	clr	a
 	rlc	a
 	orl	a,r5
 	mov	r6,a
-;	i2c.c:69: i2c_delay(10);
+;	i2c.c:72: i2c_delay(10);
 	mov	dptr,#0x000a
 	push	ar6
 	lcall	_i2c_delay
 	pop	ar6
 	pop	ar7
-;	i2c.c:70: I2C_SCL = 0;
+;	i2c.c:73: I2C_SCL = 0;
 ;	assignBit
 	clr	_P0_7
 	sjmp	00101$
 00103$:
-;	i2c.c:78: return val;
+;	i2c.c:81: return val;
 	mov	dpl,r6
-;	i2c.c:79: }
+;	i2c.c:82: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'i2c_write_byte'
@@ -592,27 +576,27 @@ _i2c_read:
 ;val                       Allocated with name '_i2c_write_byte_PARM_2'
 ;addr                      Allocated to registers r7 
 ;------------------------------------------------------------
-;	i2c.c:81: void i2c_write_byte(unsigned char addr, unsigned char val){
+;	i2c.c:84: void i2c_write_byte(unsigned char addr, unsigned char val){
 ;	-----------------------------------------
 ;	 function i2c_write_byte
 ;	-----------------------------------------
 _i2c_write_byte:
-;	i2c.c:82: addr<<=1;
+;	i2c.c:85: addr<<=1;
 	mov	a,dpl
 	add	a,dpl
 	mov	r7,a
-;	i2c.c:83: i2c_start();
+;	i2c.c:86: i2c_start();
 	push	ar7
 	lcall	_i2c_start
 	pop	ar7
-;	i2c.c:84: i2c_write(addr);
+;	i2c.c:87: i2c_write(addr);
 	mov	dpl,r7
 	lcall	_i2c_write
-;	i2c.c:85: i2c_write(val);
+;	i2c.c:88: i2c_write(val);
 	mov	dpl,_i2c_write_byte_PARM_2
 	lcall	_i2c_write
-;	i2c.c:86: i2c_stop();
-;	i2c.c:87: }
+;	i2c.c:89: i2c_stop();
+;	i2c.c:90: }
 	ljmp	_i2c_stop
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'i2c_read_byte'
@@ -620,112 +604,255 @@ _i2c_write_byte:
 ;addr                      Allocated to registers r7 
 ;value                     Allocated to registers r6 
 ;------------------------------------------------------------
-;	i2c.c:89: unsigned char i2c_read_byte(unsigned char addr){
+;	i2c.c:92: unsigned char i2c_read_byte(unsigned char addr){
 ;	-----------------------------------------
 ;	 function i2c_read_byte
 ;	-----------------------------------------
 _i2c_read_byte:
 	mov	r7,dpl
-;	i2c.c:90: P0_1 = 1;
-;	assignBit
-	setb	_P0_1
-;	i2c.c:91: unsigned char value = 0;
+;	i2c.c:94: unsigned char value = 0;
 	mov	r6,#0x00
-;	i2c.c:92: addr <<=1;
+;	i2c.c:95: addr <<=1;
 	mov	a,r7
 	add	a,r7
 	mov	r7,a
-;	i2c.c:93: addr |= 1;
+;	i2c.c:96: addr |= 1;
 	orl	ar7,#0x01
-;	i2c.c:94: i2c_start();
+;	i2c.c:97: i2c_start();
 	push	ar7
 	push	ar6
 	lcall	_i2c_start
 	pop	ar6
 	pop	ar7
-;	i2c.c:95: if(!i2c_write(addr)){
+;	i2c.c:98: if(!i2c_write(addr)){
 	mov	dpl,r7
 	push	ar6
 	lcall	_i2c_write
 	mov	a,dpl
 	pop	ar6
 	jnz	00102$
-;	i2c.c:96: value = i2c_read();
+;	i2c.c:99: value = i2c_read();
 	lcall	_i2c_read
 	mov	r6,dpl
 00102$:
-;	i2c.c:98: i2c_stop();
+;	i2c.c:101: i2c_stop();
 	push	ar6
 	lcall	_i2c_stop
 	pop	ar6
-;	i2c.c:99: P0_1 = 0;
-;	assignBit
-	clr	_P0_1
-;	i2c.c:100: return value;
+;	i2c.c:103: return value;
 	mov	dpl,r6
-;	i2c.c:101: }
+;	i2c.c:104: }
 	ret
 ;------------------------------------------------------------
-;Allocation info for local variables in function 'main'
+;Allocation info for local variables in function 'lcd_send_bits'
 ;------------------------------------------------------------
-;readVal                   Allocated to registers r6 
 ;data                      Allocated to registers r7 
 ;------------------------------------------------------------
-;	i2c.c:103: void main(void){
+;	i2c.c:106: void lcd_send_bits(unsigned char data){
 ;	-----------------------------------------
-;	 function main
+;	 function lcd_send_bits
 ;	-----------------------------------------
-_main:
-;	i2c.c:105: unsigned char data = 0;
-	mov	r7,#0x00
-;	i2c.c:106: readVal = i2c_read_byte(LED_I2C_ADDR);
-	mov	dpl,#0x20
-	push	ar7
-	lcall	_i2c_read_byte
-	mov	r6,dpl
-	pop	ar7
-;	i2c.c:108: if(readVal & 0x80){
-	mov	a,r6
-	jnb	acc.7,00102$
-;	i2c.c:109: data |= 0x01;
-	mov	r7,#0x01
-00102$:
-;	i2c.c:111: if (readVal & 0x40){
-	mov	a,r6
-	jnb	acc.6,00104$
-;	i2c.c:112: data |= 0x02;
-	mov	ar4,r7
-	mov	r5,#0x00
-	orl	ar4,#0x02
-	mov	ar7,r4
-00104$:
-;	i2c.c:114: if (readVal & 0x20){
-	mov	a,r6
-	jnb	acc.5,00106$
-;	i2c.c:115: data |= 0x04;
-	mov	ar4,r7
-	mov	r5,#0x00
-	orl	ar4,#0x04
-	mov	ar7,r4
-00106$:
-;	i2c.c:117: if (readVal & 0x10){
-	mov	a,r6
-	jnb	acc.4,00108$
-;	i2c.c:118: data |= 0x08;
-	mov	ar5,r7
-	mov	r6,#0x00
-	orl	ar5,#0x08
-	mov	ar7,r5
-00108$:
-;	i2c.c:120: i2c_write_byte(LED_I2C_ADDR, data);
+_lcd_send_bits:
+	mov	r7,dpl
+;	i2c.c:107: i2c_write_byte(LCD_I2C_ADDR, data);
 	mov	_i2c_write_byte_PARM_2,r7
-	mov	dpl,#0x20
+	mov	dpl,#0x27
+	push	ar7
 	lcall	_i2c_write_byte
-;	i2c.c:121: P1 = 0;
-	mov	_P1,#0x00
-;	i2c.c:123: }
+	pop	ar7
+;	i2c.c:108: i2c_write_byte(LCD_I2C_ADDR, data|0x04);
+	mov	ar5,r7
+	orl	ar5,#0x04
+	mov	_i2c_write_byte_PARM_2,r5
+	mov	dpl,#0x27
+	push	ar7
+	lcall	_i2c_write_byte
+;	i2c.c:109: i2c_delay(50);
+	mov	dptr,#0x0032
+	lcall	_i2c_delay
+	pop	ar7
+;	i2c.c:110: i2c_write_byte(LCD_I2C_ADDR, data*~0x04);
+	mov	a,r7
+	mov	b,#0xfb
+	mul	ab
+	mov	_i2c_write_byte_PARM_2,a
+	mov	dpl,#0x27
+	lcall	_i2c_write_byte
+;	i2c.c:111: delayMs(1);
+	mov	dptr,#0x0001
+;	i2c.c:112: }
+	ljmp	_delayMs
+;------------------------------------------------------------
+;Allocation info for local variables in function 'lcd_writeChar'
+;------------------------------------------------------------
+;data                      Allocated with name '_lcd_writeChar_PARM_2'
+;mode                      Allocated to registers r7 
+;hnib                      Allocated to registers r5 
+;lnib                      Allocated to registers r6 
+;------------------------------------------------------------
+;	i2c.c:114: void lcd_writeChar(unsigned char mode, unsigned char data){
+;	-----------------------------------------
+;	 function lcd_writeChar
+;	-----------------------------------------
+_lcd_writeChar:
+	mov	r7,dpl
+;	i2c.c:115: unsigned char hnib = data & 0xF0;
+	mov	r6,_lcd_writeChar_PARM_2
+	mov	a,#0xf0
+	anl	a,r6
+	mov	r5,a
+;	i2c.c:116: unsigned char lnib = (data << 4) & 0xF0;
+	mov	a,r6
+	swap	a
+	anl	a,#0xf0
+	mov	r6,a
+	anl	ar6,#0xf0
+;	i2c.c:117: lcd_send_bits(hnib | mode);
+	mov	a,r7
+	orl	a,r5
+	mov	dpl,a
+	push	ar7
+	push	ar6
+	lcall	_lcd_send_bits
+	pop	ar6
+	pop	ar7
+;	i2c.c:118: lcd_send_bits(lnib | mode);
+	mov	a,r7
+	orl	a,r6
+	mov	dpl,a
+;	i2c.c:119: }
+	ljmp	_lcd_send_bits
+;------------------------------------------------------------
+;Allocation info for local variables in function 'lcd_writeString'
+;------------------------------------------------------------
+;text                      Allocated to registers r5 r6 r7 
+;i                         Allocated to registers r4 
+;------------------------------------------------------------
+;	i2c.c:121: void lcd_writeString(unsigned char text[]){
+;	-----------------------------------------
+;	 function lcd_writeString
+;	-----------------------------------------
+_lcd_writeString:
+	mov	r5,dpl
+	mov	r6,dph
+	mov	r7,b
+;	i2c.c:123: while (text[i] != '\0'){
+	mov	r4,#0x00
+00101$:
+	mov	a,r4
+	add	a,r5
+	mov	r1,a
+	clr	a
+	addc	a,r6
+	mov	r2,a
+	mov	ar3,r7
+	mov	dpl,r1
+	mov	dph,r2
+	mov	b,r3
+	lcall	__gptrget
+	mov	r3,a
+	jz	00104$
+;	i2c.c:124: lcd_writeChar(1, text[i]);
+	mov	_lcd_writeChar_PARM_2,r3
+	mov	dpl,#0x01
+	push	ar7
+	push	ar6
+	push	ar5
+	push	ar4
+	lcall	_lcd_writeChar
+	pop	ar4
+	pop	ar5
+	pop	ar6
+	pop	ar7
+;	i2c.c:125: i++;
+	inc	r4
+	sjmp	00101$
+00104$:
+;	i2c.c:127: }
+	ret
+;------------------------------------------------------------
+;Allocation info for local variables in function 'lcd_Init'
+;------------------------------------------------------------
+;	i2c.c:129: void lcd_Init(){
+;	-----------------------------------------
+;	 function lcd_Init
+;	-----------------------------------------
+_lcd_Init:
+;	i2c.c:130: lcd_writeChar(0, 0x33);
+	mov	_lcd_writeChar_PARM_2,#0x33
+	mov	dpl,#0x00
+	lcall	_lcd_writeChar
+;	i2c.c:131: delayMs(2);
+	mov	dptr,#0x0002
+	lcall	_delayMs
+;	i2c.c:132: lcd_writeChar(0, 0x32);
+	mov	_lcd_writeChar_PARM_2,#0x32
+	mov	dpl,#0x00
+	lcall	_lcd_writeChar
+;	i2c.c:133: delayMs(2);
+	mov	dptr,#0x0002
+	lcall	_delayMs
+;	i2c.c:134: lcd_writeChar(0, 0x28);
+	mov	_lcd_writeChar_PARM_2,#0x28
+	mov	dpl,#0x00
+	lcall	_lcd_writeChar
+;	i2c.c:135: delayMs(2);
+	mov	dptr,#0x0002
+	lcall	_delayMs
+;	i2c.c:136: lcd_writeChar(0, 0x0C);
+	mov	_lcd_writeChar_PARM_2,#0x0c
+	mov	dpl,#0x00
+	lcall	_lcd_writeChar
+;	i2c.c:137: lcd_writeChar(0, 0x01);
+	mov	_lcd_writeChar_PARM_2,#0x01
+	mov	dpl,#0x00
+	lcall	_lcd_writeChar
+;	i2c.c:138: delayMs(2);
+	mov	dptr,#0x0002
+	lcall	_delayMs
+;	i2c.c:139: lcd_writeChar(0, 0x06);
+	mov	_lcd_writeChar_PARM_2,#0x06
+	mov	dpl,#0x00
+;	i2c.c:140: }
+	ljmp	_lcd_writeChar
+;------------------------------------------------------------
+;Allocation info for local variables in function 'printMessage'
+;------------------------------------------------------------
+;	i2c.c:142: void printMessage(){
+;	-----------------------------------------
+;	 function printMessage
+;	-----------------------------------------
+_printMessage:
+;	i2c.c:143: lcd_writeString("Hello World");
+	mov	dptr,#___str_0
+	mov	b,#0x80
+	lcall	_lcd_writeString
+;	i2c.c:144: lcd_writeChar(0, 0xC0);
+	mov	_lcd_writeChar_PARM_2,#0xc0
+	mov	dpl,#0x00
+	lcall	_lcd_writeChar
+;	i2c.c:145: lcd_writeString("   Bob is Great!");
+	mov	dptr,#___str_1
+	mov	b,#0x80
+	lcall	_lcd_writeString
+;	i2c.c:146: delayMs(10000);
+	mov	dptr,#0x2710
+	lcall	_delayMs
+;	i2c.c:147: if (getMode()){
+	lcall	_getMode
+	mov	a,dpl
+	jz	00103$
+;	i2c.c:148: return;
+00103$:
+;	i2c.c:150: }
 	ret
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
+___str_0:
+	.ascii "Hello World"
+	.db 0x00
+___str_1:
+	.ascii "   Bob is Great!"
+	.db 0x00
 	.area XINIT   (CODE)
 	.area CABS    (ABS,CODE)

@@ -18,5 +18,6 @@ main.rel
 ../a_lcd/a_lcd.rel
 ../buttonPress/buttonPress.rel
 ../binaryCount/binaryCount.rel
+../i2c/i2c.rel
 
 -e

@@ -11,7 +11,6 @@ C:   00000000  l_BIT_BANK
 C:   00000000  l_BSEG                          
 C:   00000000  l_BSEG_BYTES                    
 C:   00000000  l_CABS                          
-C:   00000000  l_CONST                         
 C:   00000000  l_GSINIT                        
 C:   00000000  l_GSINIT1                       
 C:   00000000  l_GSINIT5                       
@@ -52,11 +51,12 @@ C:   00000008  l_REG_BANK_0
 C:   00000008  s_REG_BANK_1                    
 C:   00000009  s_GSINIT1                       
 C:   00000009  s_GSINIT2                       
-C:   00000009  s_SSEG                          
 C:   0000000A  l_GSINIT2                       
+C:   0000000A  s_SSEG                          
 C:   00000010  s_REG_BANK_2                    
 C:   00000013  s_GSINIT3                       
 C:   00000018  s_BIT_BANK                      
+C:   00000018  s_OSEG                          
 ASxxxx Linker V03.00 + NoICE + sdld,  page 2.
 Hexadecimal  [32-Bits]
 
@@ -66,8 +66,8 @@ CABS                                00000000    00000000 =           0. bytes (A
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-C:   00000018  s_OSEG                          
 C:   00000018  s_REG_BANK_3                    
+C:   0000001D  l_CONST                         
 C:   00000020  s_BSEG_BYTES                    
 C:   00000020  s__CODE                         
 C:   00000022  l_GSINIT3                       
@@ -78,11 +78,11 @@ C:   0000005F  s_GSINIT
 C:   0000005F  s_GSINIT5                       
 C:   00000062  s_CSEG                          
 C:   00000080  l_DSEG                          
-C:   000000F7  l_SSEG                          
+C:   000000F6  l_SSEG                          
 C:   00000100  l_IRAM                          
-C:   00000195  l_CSEG                          
-C:   000001F7  s_CONST                         
-C:   000001F7  s_XINIT                         
+C:   00000276  l_CSEG                          
+C:   000002D8  s_CONST                         
+C:   000002F5  s_XINIT                         
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 3.
 Hexadecimal  [32-Bits]
@@ -200,6 +200,9 @@ Area                                    Addr        Size        Decimal Bytes (A
      000000D7  _CY                                i2c
      000000E0  _ACC                               i2c
      000000F0  _B                                 i2c
+     000000F5  _B_5                               _gptrget
+     000000F6  _B_6                               _gptrget
+     000000F7  _B_7                               _gptrget
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 5.
 Hexadecimal  [32-Bits]
@@ -220,17 +223,18 @@ DSEG                                00000000    00000080 =         128. bytes (R
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
      00000008  _i2c_write_byte_PARM_2             i2c
+     00000009  _lcd_writeChar_PARM_2              i2c
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 7.
 Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-SSEG                                00000009    000000F7 =         247. bytes (REL,OVR)
+SSEG                                0000000A    000000F6 =         246. bytes (REL,OVR)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
-     00000009  __start__stack                     i2c
+     0000000A  __start__stack                     i2c
 
 ASxxxx Linker V03.00 + NoICE + sdld,  page 8.
 Hexadecimal  [32-Bits]
@@ -300,7 +304,7 @@ Hexadecimal  [32-Bits]
 
 Area                                    Addr        Size        Decimal Bytes (Attributes)
 --------------------------------        ----        ----        ------- ----- ------------
-CSEG                                00000062    00000195 =         405. bytes (REL,CON,CODE)
+CSEG                                00000062    00000276 =         630. bytes (REL,CON,CODE)
 
       Value  Global                              Global Defined In Module
       -----  --------------------------------   ------------------------
@@ -312,10 +316,23 @@ C:   000000BA  _i2c_write                         i2c
 C:   00000122  _i2c_read                          i2c
 C:   0000015D  _i2c_write_byte                    i2c
 C:   00000177  _i2c_read_byte                     i2c
-C:   000001AC  _main                              i2c
-C:   000001F3  __sdcc_external_startup            _startup
-
+C:   000001A8  _lcd_send_bits                     i2c
+C:   000001E0  _lcd_writeChar                     i2c
+C:   00000206  _lcd_writeString                   i2c
+C:   0000023E  _lcd_Init                          i2c
+C:   0000028C  _main                              i2c
+C:   000002B8  __gptrget                          _gptrget
+C:   000002D4  __sdcc_external_startup            _startup
 ASxxxx Linker V03.00 + NoICE + sdld,  page 15.
+Hexadecimal  [32-Bits]
+
+Area                                    Addr        Size        Decimal Bytes (Attributes)
+--------------------------------        ----        ----        ------- ----- ------------
+CONST                               000002D8    0000001D =          29. bytes (REL,CON,CODE)
+
+      Value  Global                              Global Defined In Module
+      -----  --------------------------------   ------------------------
+ASxxxx Linker V03.00 + NoICE + sdld,  page 16.
 
 Files Linked                              [ module(s) ]
 
@@ -335,9 +352,11 @@ Libraries Linked                          [ object file ]
 /usr/bin/../share/sdcc/lib/small/mcs51.lib
                                           [ crtstart.rel ]
 /usr/bin/../share/sdcc/lib/small/libsdcc.lib
+                                          [ _gptrget.rel ]
+/usr/bin/../share/sdcc/lib/small/libsdcc.lib
                                           [ _startup.rel ]
 
-ASxxxx Linker V03.00 + NoICE + sdld,  page 16.
+ASxxxx Linker V03.00 + NoICE + sdld,  page 17.
 
 User Base Address Definitions
 

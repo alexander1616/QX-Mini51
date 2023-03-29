@@ -10,6 +10,9 @@
 ;--------------------------------------------------------
 	.globl _main
 	.globl _getMode
+	.globl _delayMs
+	.globl _lcd_Init
+	.globl _printMessage
 	.globl _digitDisplay
 	.globl _dualCylon
 	.globl _cylon
@@ -343,7 +346,7 @@ __interrupt_vect:
 	.globl __mcs51_genXINIT
 	.globl __mcs51_genXRAMCLEAR
 	.globl __mcs51_genRAMCLEAR
-;	main.c:6: unsigned char mode = 0;
+;	main.c:7: unsigned char mode = 0;
 	mov	_mode,#0x00
 	.area GSFINAL (CODE)
 	ljmp	__sdcc_program_startup
@@ -364,7 +367,7 @@ __sdcc_program_startup:
 ;------------------------------------------------------------
 ;switchMode                Allocated to registers r7 
 ;------------------------------------------------------------
-;	main.c:8: unsigned char getMode(){
+;	main.c:10: unsigned char getMode(){
 ;	-----------------------------------------
 ;	 function getMode
 ;	-----------------------------------------
@@ -377,42 +380,49 @@ _getMode:
 	ar2 = 0x02
 	ar1 = 0x01
 	ar0 = 0x00
-;	main.c:10: switchMode = readButton();
+;	main.c:12: switchMode = readButton();
 	lcall	_readButton
 	mov	r7,dpl
-;	main.c:11: if (switchMode == 1){
+;	main.c:13: if (switchMode == 1){
 	cjne	r7,#0x01,00102$
-;	main.c:12: mode++;
+;	main.c:14: mode++;
 	inc	_mode
-;	main.c:16: return 1;
+;	main.c:18: return 1;
 	mov	dpl,#0x01
 	ret
 00102$:
-;	main.c:18: return 0;
+;	main.c:20: return 0;
 	mov	dpl,#0x00
-;	main.c:19: }
+;	main.c:21: }
 	ret
 ;------------------------------------------------------------
 ;Allocation info for local variables in function 'main'
 ;------------------------------------------------------------
 ;button                    Allocated to registers r7 
 ;------------------------------------------------------------
-;	main.c:21: void main(){
+;	main.c:23: void main(){
 ;	-----------------------------------------
 ;	 function main
 ;	-----------------------------------------
 _main:
-;	main.c:22: while(1){
+;	main.c:24: lcd_Init();
+	lcall	_lcd_Init
+;	main.c:25: delayMs(1000);
+	mov	dptr,#0x03e8
+	lcall	_delayMs
+;	main.c:26: printMessage();
+	lcall	_printMessage
+;	main.c:27: while(1){
 00110$:
-;	main.c:24: button = readButton();
+;	main.c:29: button = readButton();
 	lcall	_readButton
 	mov	r7,dpl
-;	main.c:25: if (button == 1){
+;	main.c:30: if (button == 1){
 	cjne	r7,#0x01,00102$
-;	main.c:26: mode++;
+;	main.c:31: mode++;
 	inc	_mode
 00102$:
-;	main.c:28: switch (mode){
+;	main.c:33: switch (mode){
 	mov	a,_mode
 	add	a,#0xff - 0x03
 	jc	00107$
@@ -426,36 +436,36 @@ _main:
 	ljmp	00104$
 	ljmp	00105$
 	ljmp	00106$
-;	main.c:29: case 0:
+;	main.c:34: case 0:
 00103$:
-;	main.c:30: dualCylon();
+;	main.c:35: dualCylon();
 	lcall	_dualCylon
-;	main.c:31: break;
-;	main.c:32: case 1:
+;	main.c:36: break;
+;	main.c:37: case 1:
 	sjmp	00110$
 00104$:
-;	main.c:33: cylon();
+;	main.c:38: cylon();
 	lcall	_cylon
-;	main.c:34: break;
-;	main.c:35: case 2:
+;	main.c:39: break;
+;	main.c:40: case 2:
 	sjmp	00110$
 00105$:
-;	main.c:36: binaryCount();
+;	main.c:41: binaryCount();
 	lcall	_binaryCount
-;	main.c:37: break;
-;	main.c:38: case 3:
+;	main.c:42: break;
+;	main.c:43: case 3:
 	sjmp	00110$
 00106$:
-;	main.c:39: digitDisplay();
+;	main.c:44: digitDisplay();
 	lcall	_digitDisplay
-;	main.c:40: break;
-;	main.c:41: default:
+;	main.c:45: break;
+;	main.c:46: default:
 	sjmp	00110$
 00107$:
-;	main.c:42: mode = 0;
+;	main.c:47: mode = 0;
 	mov	_mode,#0x00
-;	main.c:44: }
-;	main.c:46: }
+;	main.c:49: }
+;	main.c:51: }
 	sjmp	00110$
 	.area CSEG    (CODE)
 	.area CONST   (CODE)
